@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 
 export default function LoadingScreen() {
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center z-50 overflow-hidden">
+    <div className="fixed inset-0 bg-gradient-to-br from-deep-space via-blue-900 to-deep-space flex items-center justify-center z-50 overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0">
         <motion.div

@@ -36,7 +36,7 @@ export default function Navigation() {
   ]
 
   return (
-    <nav className="fixed top-0 w-full bg-white border-b border-gray-200 z-50">
+    <nav className="fixed top-0 w-full bg-meltgreen border-b border-gray-200 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -47,7 +47,7 @@ export default function Navigation() {
             <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-meltgreen/20 via-white to-white border border-meltgreen/30 shadow-sm">
               <img src="/logo_2.png" alt="Jaycrown logo" className="h-8 w-8 rounded-xl" />
             </span>
-            <span>Jay<span className="text-meltgreen">crownHub</span></span>
+            <span>Jay<span className="text-white">crownHub</span></span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -82,44 +82,54 @@ export default function Navigation() {
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            variants={mobileMenuVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-            className="fixed inset-0 bg-deep-space z-40 pt-20 md:hidden"
-          >
-            {/* Close Button */}
-            <button
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-x-0 top-16 bottom-0 bg-black/10 backdrop-blur-sm z-39 md:hidden"
               onClick={() => setIsOpen(false)}
-              className="absolute top-4 right-4 p-2 rounded-lg hover:bg-white/10 transition-smooth"
-              aria-label="Close menu"
-            >
-              <X size={28} className="text-white" />
-            </button>
+            />
 
-            {/* Menu Items */}
-            <div className="flex flex-col space-y-4 px-6 py-8 mx-4 rounded-lg bg-white/5 border border-white/10 backdrop-blur-sm">
-              {navLinks.map((link, i) => (
-                <motion.div
-                  key={link.label}
-                  custom={i}
-                  variants={mobileItemVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="rounded-lg bg-white/10 hover:bg-white/20 transition-smooth"
-                >
-                  <Link
-                    to={link.href}
-                    className="text-2xl font-semibold text-white hover:text-meltgreen transition-smooth block py-3 px-4 text-left"
-                    onClick={() => setIsOpen(false)}
+            <motion.div
+              variants={mobileMenuVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              className="fixed top-16 right-0 h-[calc(100vh-4rem)] w-[38%] bg-meltgreen z-40 pt-4 md:hidden overflow-y-auto"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setIsOpen(false)}
+                className="absolute top-4 right-4 p-2 rounded-lg hover:bg-white/20 transition-smooth"
+                aria-label="Close menu"
+              >
+                <X size={28} className="text-deep-space" />
+              </button>
+
+              {/* Menu Items */}
+              <div className="flex flex-col space-y-1 px-4 py-4">
+                {navLinks.map((link, i) => (
+                  <motion.div
+                    key={link.label}
+                    custom={i}
+                    variants={mobileItemVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className="rounded-lg hover:bg-white/20 transition-smooth"
                   >
-                    {link.label}
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+                    <Link
+                      to={link.href}
+                      className="text-lg font-semibold text-deep-space hover:text-deep-space/80 transition-smooth block py-2 px-3 text-left"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </nav>
