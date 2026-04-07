@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  @apply bg-white text-deep-space font-sans;
+  background-image: radial-gradient(circle at top left, rgba(45,255,196,0.08), transparent 24%), radial-gradient(circle at bottom right, rgba(10,25,47,0.06), transparent 20%);
+  font-feature-settings: "rlig" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Smooth animations */
+@layer utilities {
+  .transition-smooth {
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  .glow-meltgreen {
+    @apply drop-shadow-[0_0_15px_rgba(45,255,196,0.3)];
+  }
+}
