@@ -12,37 +12,37 @@ const staffMembers = [
     image: '/staff_olajide.webp',
   },
   {
-    name: 'Priya Desai',
+    name: 'Mayor',
     role: 'Lead Frontend Engineer',
     focus: 'Designing performant and scalable UI systems',
     image: '/staff.png',
   },
   {
-    name: 'Noah Bennett',
+    name: 'Danial',
     role: 'DevOps Specialist',
     focus: 'Automating delivery pipelines',
     image: '/staff.png',
   },
   {
-    name: 'Elena Wu',
+    name: 'John Sause',
     role: 'Data Analyst',
     focus: 'Turning usage data into insights',
     image: '/staff.png',
   },
   {
-    name: 'Jamal Grant',
+    name: 'Bolexy',
     role: 'Growth Strategist',
     focus: 'Helping products reach new audiences',
     image: '/staff.png',
   },
   {
-    name: 'Sara Petrov',
+    name: 'Emmanuel',
     role: 'QA Lead',
     focus: 'Ensuring polished production quality',
     image: '/staff.png',
   },
   {
-    name: 'Leo Matthews',
+    name: 'Precious',
     role: 'Customer Success Partner',
     focus: 'Aligning product outcomes with clients',
     image: '/staff.png',
@@ -67,10 +67,10 @@ export default function TeamSection() {
               ensuring your project moves faster and stays perfectly aligned.
             </p>
           </div>
-          <div className="hidden md:block">
+          {/* <div className="hidden md:block">
             <div className="w-16 h-16 bg-deep-space rounded-2xl flex items-center justify-center">
                <img src="/logo_2.png" alt="Jaycrown logo" className="h-10 w-10" />
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -91,7 +91,7 @@ export default function TeamSection() {
             </article>
           ))}
         </div>
-      </div>
+      
     </section>
   )
 }
