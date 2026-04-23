@@ -102,7 +102,7 @@ const projects = [
     summary:
       'E-commerce store for groceries, kitchen utensils, clothing, and other everyday household products.',
     stack: ['PHP API', 'React', 'Nest', 'Supabase'],
-    access: [{ label: 'Demo', href: 'https://rayyarieties.vercel.app' }],
+    access: [{ label: 'Demo', href: 'https://rayyvarieties.vercel.app/' }],
     logoSrc: '/rayy.png',
     logoClassName: 'scale-[1.25]',
     icon: ShoppingBag,
