@@ -2,7 +2,12 @@ import { motion } from 'framer-motion'
 
 export default function PartnerMarquee() {
   const partners = [
-    { name: 'NexaCore', logo: 'NC' },
+    {
+      name: 'RAOLAK PROPERTIES LTD',
+      logo: '',
+      logoSrc: '/rpllogo.png',
+      logoClassName: 'scale-[1.7]',
+    },
     { name: 'Velocity', logo: 'VL' },
     { name: 'Quantum', logo: 'QM' },
     { name: 'ApexData', logo: 'AD' },
@@ -36,10 +41,24 @@ export default function PartnerMarquee() {
                 className="flex items-center gap-4 group cursor-pointer"
                 whileHover={{ scale: 1.1 }}
               >
-                <div className="w-14 h-14 rounded-xl border border-gray-100 flex items-center justify-center bg-gray-50 group-hover:bg-deep-space group-hover:border-deep-space transition-all duration-300">
-                  <span className="text-xl font-black text-gray-300 group-hover:text-meltgreen grayscale group-hover:grayscale-0 transition-all duration-300">
-                    {partner.logo}
-                  </span>
+                <div
+                  className={`w-14 h-14 rounded-xl border border-gray-100 flex items-center justify-center overflow-hidden transition-all duration-300 ${
+                    partner.logoSrc
+                      ? 'bg-white p-2'
+                      : 'bg-gray-50 group-hover:bg-deep-space group-hover:border-deep-space'
+                  }`}
+                >
+                  {partner.logoSrc ? (
+                    <img
+                      src={partner.logoSrc}
+                      alt={`${partner.name} logo`}
+                      className={`h-full w-full object-contain ${partner.logoClassName || ''}`}
+                    />
+                  ) : (
+                    <span className="text-xl font-black text-gray-300 group-hover:text-meltgreen grayscale group-hover:grayscale-0 transition-all duration-300">
+                      {partner.logo}
+                    </span>
+                  )}
                 </div>
                 <span className="text-xl font-bold text-gray-300 group-hover:text-deep-space transition-all duration-300">
                   {partner.name}

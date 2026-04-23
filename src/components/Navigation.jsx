@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const location = useLocation()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,9 +17,9 @@ export default function Navigation() {
 
   const navLinks = [
     { label: 'Services', href: '/#services' },
-    { label: 'Work', href: '/#work' },
-    { label: 'In Production', href: '/#in-production' },
+    { label: 'Projects', href: '/#work' },
     { label: 'About Us', href: '/#about' },
+    { label: 'Contact', href: '/#inquiry' },
   ]
 
   return (
