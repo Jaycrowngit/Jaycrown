@@ -1,135 +1,106 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const location = useLocation()
 
-  const navVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-  }
-
-  const mobileMenuVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.3 } },
-  }
-
-  const mobileItemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: (i) => ({
-      opacity: 1,
-      x: 0,
-      transition: { delay: i * 0.1, duration: 0.3 },
-    }),
-  }
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const navLinks = [
-    { label: 'Work', href: '/#live-lab' },
-    { label: 'Freelance', href: '/freelance' },
-    { label: 'Partner', href: '/partner' },
-    { label: 'Collaborate', href: '/collaborate' },
-    { label: 'Hire Me', href: '/hire' },
-    { label: '⭐ Reviews', href: '/reviews' },
-    { label: '📊 Submissions', href: '/submissions' },
+    { label: 'Services', href: '/#services' },
+    { label: 'Work', href: '/#work' },
+    { label: 'In Production', href: '/#in-production' },
+    { label: 'About Us', href: '/#about' },
   ]
 
   return (
-    <nav className="fixed top-0 w-full bg-meltgreen border-b border-gray-200 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <nav 
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+        scrolled 
+        ? 'bg-white/80 backdrop-blur-md border-b border-gray-100 py-3' 
+        : 'bg-transparent py-5'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link
-            to="/"
-            className="flex items-center gap-3 text-xl font-bold text-slate-900 hover:text-meltgreen transition-smooth"
-          >
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-meltgreen/20 via-white to-white border border-meltgreen/30 shadow-sm">
-              <img src="/logo_2.png" alt="Jaycrown logo" className="h-8 w-8 rounded-xl" />
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="w-10 h-10 bg-deep-space flex items-center justify-center rounded-lg group-hover:bg-meltgreen transition-colors duration-300">
+              <span className="text-white font-bold text-xl group-hover:text-deep-space transition-colors">J</span>
+            </div>
+            <span className={`text-xl font-bold tracking-tight ${scrolled ? 'text-deep-space' : 'text-deep-space'}`}>
+              JAYTECH<span className="text-meltgreen">HUB</span>
             </span>
-            <span>Jay<span className="text-white">crownHub</span></span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          {/* Desktop Links */}
+          <div className="hidden md:flex items-center space-x-10">
             {navLinks.map((link) => (
-              <Link
+              <a
                 key={link.label}
-                to={link.href}
-                className="text-sm font-medium text-deep-space hover:text-meltgreen transition-smooth"
+                href={link.href}
+                className="text-sm font-semibold text-deep-space/70 hover:text-deep-space transition-colors uppercase tracking-wider"
               >
                 {link.label}
-              </Link>
+              </a>
             ))}
+            <a
+              href="#inquiry"
+              className="bg-meltgreen text-deep-space px-6 py-2.5 rounded-full text-sm font-bold hover:shadow-[0_0_20px_rgba(45,255,196,0.4)] transition-all transform hover:-translate-y-0.5 active:scale-95"
+            >
+              Start a Project
+            </a>
           </div>
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile Toggle */}
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-smooth"
+            className="md:hidden p-2 text-deep-space"
             onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
-            aria-expanded={isOpen}
           >
-            {isOpen ? (
-              <X size={24} className="text-deep-space" />
-            ) : (
-              <Menu size={24} className="text-deep-space" />
-            )}
+            {isOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-x-0 top-16 bottom-0 bg-black/10 backdrop-blur-sm z-39 md:hidden"
-              onClick={() => setIsOpen(false)}
-            />
-
-            <motion.div
-              variants={mobileMenuVariants}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              className="fixed top-16 right-0 h-[calc(100vh-4rem)] w-[38%] bg-meltgreen z-40 pt-4 md:hidden overflow-y-auto"
-            >
-              {/* Close Button */}
-              <button
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-white border-b border-gray-100 overflow-hidden"
+          >
+            <div className="px-6 py-8 flex flex-col space-y-6">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="text-lg font-bold text-deep-space"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {link.label}
+                </a>
+              ))}
+              <a
+                href="#inquiry"
+                className="bg-meltgreen text-deep-space w-full py-4 rounded-xl text-center font-bold text-lg"
                 onClick={() => setIsOpen(false)}
-                className="absolute top-4 right-4 p-2 rounded-lg hover:bg-white/20 transition-smooth"
-                aria-label="Close menu"
               >
-                <X size={28} className="text-deep-space" />
-              </button>
-
-              {/* Menu Items */}
-              <div className="flex flex-col space-y-1 px-4 py-4">
-                {navLinks.map((link, i) => (
-                  <motion.div
-                    key={link.label}
-                    custom={i}
-                    variants={mobileItemVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="rounded-lg hover:bg-white/20 transition-smooth"
-                  >
-                    <Link
-                      to={link.href}
-                      className="text-lg font-semibold text-deep-space hover:text-deep-space/80 transition-smooth block py-2 px-3 text-left"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {link.label}
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </>
+                Start a Project
+              </a>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </nav>

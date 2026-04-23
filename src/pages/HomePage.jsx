@@ -1,4 +1,5 @@
 import HeroSection from '../components/HeroSection'
+import ServicesSection from '../components/ServicesSection'
 import AboutSection from '../components/AboutSection'
 import TeamSection from '../components/TeamSection'
 import PartnerMarquee from '../components/PartnerMarquee'
@@ -9,10 +10,11 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       <HeroSection />
+      <PartnerMarquee />
+      <ServicesSection />
+      <LiveLab />
       <AboutSection />
       <TeamSection />
-      <PartnerMarquee />
-      <LiveLab />
       <InteractionHub />
     </div>
   )

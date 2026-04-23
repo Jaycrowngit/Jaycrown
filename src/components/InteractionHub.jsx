@@ -1,141 +1,254 @@
-import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
-import {
-  Briefcase,
-  TrendingUp,
-  Users,
-  Rocket,
-} from 'lucide-react'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { CheckCircle2, ChevronRight, ChevronLeft, Send, Sparkles, AlertCircle } from 'lucide-react'
+import { submitFormData } from '../lib/supabaseClient'
 
 export default function InteractionHub() {
-  const pillars = [
-    {
-      id: 1,
-      title: 'Freelance',
-      description: 'Project-based work with clear scope and deliverables.',
-      icon: Briefcase,
-      href: '/freelance',
-      color: 'from-blue-500 to-blue-600',
-    },
-    {
-      id: 2,
-      title: 'Partner',
-      description: 'Long-term equity partnerships for visionary startups.',
-      icon: TrendingUp,
-      href: '/partner',
-      color: 'from-purple-500 to-purple-600',
-    },
-    {
-      id: 3,
-      title: 'Collaborate',
-      description: 'Open-source and peer development opportunities.',
-      icon: Users,
-      href: '/collaborate',
-      color: 'from-emerald-500 to-emerald-600',
-    },
-    {
-      id: 4,
-      title: 'Hire Me',
-      description: 'Full-time opportunities and contract positions.',
-      icon: Rocket,
-      href: '/hire',
-      color: 'from-orange-500 to-orange-600',
-    },
-  ]
+  const [step, setStep] = useState(1)
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState(null)
+  const [formData, setFormData] = useState({
+    service: '',
+    budget: '',
+    timeline: '',
+    email: '',
+    details: ''
+  })
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.3,
-      },
-    },
+  const services = ['Web Ecosystems', 'Mobile Apps', 'DevOps & Infrastructure', 'Design Systems']
+  const budgets = ['Under $10k', '$10k - $50k', '$50k - $100k', '$100k+']
+  const timelines = ['< 1 Month', '1-3 Months', '3-6 Months', '6 Months+']
+
+  const handleNext = () => setStep(s => s + 1)
+  const handleBack = () => setStep(s => s - 1)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setError(null)
+    
+    const result = await submitFormData('Agency Inquiry', formData)
+    
+    if (result.success) {
+      setIsSubmitted(true)
+    } else {
+      setError('System Error: Unable to transmit inquiry. Please try again or contact hello@jaytech.hub directly.')
+    }
+    setIsSubmitting(false)
   }
 
-  const cardVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.5, ease: 'easeOut' },
-    },
-  }
-
-  return (
-    <section id="interaction-hub" className="py-16 bg-gradient-to-br from-gray-50 via-deep-space/5 to-meltgreen/10 relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-deep-space/6 rounded-full blur-3xl" />
-      </div>
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  if (isSubmitted) {
+    return (
+      <div className="min-h-[600px] flex flex-col items-center justify-center p-12 text-center bg-white rounded-3xl border border-gray-100 shadow-2xl overflow-hidden relative">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
+          initial={{ scale: 0 }}
+          animate={{ scale: [0, 1.2, 1] }}
+          className="w-24 h-24 bg-meltgreen rounded-full flex items-center justify-center mb-8 shadow-[0_0_40px_rgba(45,255,196,0.6)]"
         >
-          <h2 className="text-3xl font-bold text-deep-space mb-3">
-            The Interaction Hub
-          </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Four distinct pathways to collaborate. Choose the engagement model that
-            fits your vision.
+          <CheckCircle2 size={48} className="text-deep-space" />
+        </motion.div>
+        
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <h2 className="text-4xl font-bold text-deep-space mb-4 tracking-tight">Inquiry Received</h2>
+          <p className="text-xl text-deep-space/60 max-w-md mx-auto">
+            Our team has been notified. Expect a strategic response within 24 business hours.
           </p>
         </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
-          {pillars.map((pillar) => {
-            const IconComponent = pillar.icon
-            return (
-              <motion.div
-                key={pillar.id}
-                variants={cardVariants}
-                whileHover={{ y: -8 }}
-                className="h-full"
-              >
-                <Link to={pillar.href} className="h-full">
-                  <motion.div
-                    whileHover={{ borderColor: '#2DFFC4' }}
-                    className="h-full bg-white border border-gray-200 rounded-xl p-6 transition-smooth hover:shadow-lg cursor-pointer"
-                  >
-                    <div
-                      className={`w-12 h-12 rounded-lg bg-gradient-to-br ${pillar.color} flex items-center justify-center mb-4 text-white`}
-                    >
-                      <IconComponent size={24} />
-                    </div>
+        {/* Global pulse effect on success */}
+        <motion.div 
+          className="absolute inset-0 z-[-1] bg-meltgreen/5"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 1, 0] }}
+          transition={{ duration: 1.5, repeat: 1 }}
+        />
+      </div>
+    )
+  }
 
-                    <h3 className="text-xl font-bold text-deep-space mb-2">
-                      {pillar.title}
-                    </h3>
+  return (
+    <section id="inquiry" className="py-32 bg-gray-50/50">
+      <div className="max-w-4xl mx-auto px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-deep-space/5 rounded-full mb-6 font-bold text-[10px] tracking-widest text-deep-space/60 uppercase">
+            <Sparkles size={14} className="text-meltgreen" />
+            Client Inquiry Hub
+          </div>
+          <h2 className="text-4xl md:text-6xl font-bold text-deep-space mb-6 tracking-tight">
+            Ready to <span className="text-meltgreen">scale?</span>
+          </h2>
+          <p className="text-xl text-deep-space/60">
+            Tell us about your project requirements and we'll prepare a tailored architectural proposal.
+          </p>
+        </div>
 
-                    <p className="text-sm text-gray-600 mb-6 flex-grow">
-                      {pillar.description}
-                    </p>
+        <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-2xl p-8 md:p-12 overflow-hidden relative">
+          {/* Progress bar */}
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gray-100">
+            <motion.div
+              className="h-full bg-meltgreen shadow-[0_0_10px_#2DFFC4]"
+              initial={{ width: '25%' }}
+              animate={{ width: `${(step / 4) * 100}%` }}
+              transition={{ duration: 0.5 }}
+            />
+          </div>
 
-                    <div className="flex items-center gap-2 text-meltgreen font-semibold text-sm group">
-                      <span>Explore</span>
-                      <motion.span
-                        initial={{ x: 0 }}
-                        whileHover={{ x: 4 }}
-                        transition={{ duration: 0.2 }}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={step}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {step === 1 && (
+                <div className="space-y-8">
+                  <h3 className="text-3xl font-bold text-deep-space">Which service do you need?</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {services.map(service => (
+                      <button
+                        key={service}
+                        onClick={() => { setFormData({ ...formData, service }); handleNext(); }}
+                        className={`p-6 rounded-2xl text-left border-2 transition-all font-bold group ${
+                          formData.service === service 
+                          ? 'border-meltgreen bg-meltgreen/5 text-deep-space' 
+                          : 'border-gray-100 hover:border-gray-200 text-deep-space/60'
+                        }`}
                       >
-                        →
-                      </motion.span>
+                        <div className="flex justify-between items-center">
+                          <span>{service}</span>
+                          <div className={`p-1 rounded-full ${formData.service === service ? 'bg-meltgreen' : 'bg-gray-100'}`}>
+                            <ChevronRight size={16} />
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {step === 2 && (
+                <div className="space-y-8">
+                  <h3 className="text-3xl font-bold text-deep-space">Financial & Timeline Scope</h3>
+                  <div className="space-y-10">
+                    <div>
+                      <p className="text-sm font-black text-deep-space/40 uppercase tracking-widest mb-4">Estimated Budget</p>
+                      <div className="flex flex-wrap gap-3">
+                        {budgets.map(b => (
+                          <button
+                            key={b}
+                            onClick={() => setFormData({ ...formData, budget: b })}
+                            className={`px-6 py-3 rounded-full border-2 font-bold transition-all ${
+                              formData.budget === b 
+                              ? 'border-deep-space bg-deep-space text-white' 
+                              : 'border-gray-100 hover:border-gray-200'
+                            }`}
+                          >
+                            {b}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </motion.div>
-                </Link>
-              </motion.div>
-            )
-          })}
-        </motion.div>
+                    <div>
+                      <p className="text-sm font-black text-deep-space/40 uppercase tracking-widest mb-4">Launch Timeline</p>
+                      <div className="flex flex-wrap gap-3">
+                        {timelines.map(t => (
+                          <button
+                            key={t}
+                            onClick={() => setFormData({ ...formData, timeline: t })}
+                            className={`px-6 py-3 rounded-full border-2 font-bold transition-all ${
+                              formData.timeline === t 
+                              ? 'border-meltgreen bg-meltgreen text-deep-space' 
+                              : 'border-gray-100 hover:border-gray-200'
+                            }`}
+                          >
+                            {t}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {step === 3 && (
+                <div className="space-y-8">
+                  <h3 className="text-3xl font-bold text-deep-space">The Foundation</h3>
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-sm font-black text-deep-space/40 uppercase tracking-widest mb-3">Project Details</label>
+                      <textarea
+                        className="w-full bg-gray-50 border-2 border-gray-100 rounded-3xl p-6 focus:border-meltgreen focus:ring-0 transition-all text-deep-space font-medium min-h-[150px]"
+                        placeholder="Explain your vision, current pain points, or specific technical requirements..."
+                        value={formData.details}
+                        onChange={(e) => setFormData({ ...formData, details: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-black text-deep-space/40 uppercase tracking-widest mb-3">Work Email</label>
+                      <input
+                        type="email"
+                        className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl p-4 focus:border-meltgreen focus:ring-0 transition-all text-deep-space font-medium"
+                        placeholder="john@company.com"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+
+          {error && (
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-8 p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600 text-sm font-medium"
+            >
+              <AlertCircle size={18} />
+              {error}
+            </motion.div>
+          )}
+
+          <div className="mt-12 pt-8 border-t border-gray-100 flex justify-between items-center">
+            {step > 1 ? (
+              <button 
+                onClick={handleBack} 
+                disabled={isSubmitting}
+                className="flex items-center gap-2 text-deep-space/60 font-bold hover:text-deep-space transition-colors disabled:opacity-50"
+              >
+                <ChevronLeft size={20} />
+                Back
+              </button>
+            ) : <div />}
+
+            {step < 3 ? (
+              <button 
+                onClick={handleNext}
+                className="bg-deep-space text-white px-8 py-4 rounded-2xl font-bold flex items-center gap-3 hover:bg-deep-space/90 transition-all disabled:opacity-50"
+                disabled={step === 1 && !formData.service}
+              >
+                Continue
+                <ChevronRight size={20} />
+              </button>
+            ) : (
+              <button 
+                onClick={handleSubmit}
+                className="bg-meltgreen text-deep-space px-10 py-4 rounded-2xl font-bold flex items-center gap-3 hover:translate-x-1 group transition-all disabled:opacity-50 shadow-[0_0_30px_rgba(45,255,196,0.3)]"
+                disabled={!formData.email || !formData.details || isSubmitting}
+              >
+                {isSubmitting ? 'Transmitting...' : 'Send Inquiry'}
+                {!isSubmitting && <Send size={18} className="transition-transform group-hover:rotate-12" />}
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   )

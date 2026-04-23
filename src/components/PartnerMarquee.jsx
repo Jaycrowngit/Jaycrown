@@ -1,84 +1,53 @@
 import { motion } from 'framer-motion'
-import { useState } from 'react'
 
 export default function PartnerMarquee() {
   const partners = [
-    { id: 1, name: 'TechCorp', initials: 'TC' },
-    { id: 2, name: 'CloudScale', initials: 'CS' },
-    { id: 3, name: 'DevHub', initials: 'DH' },
-    { id: 4, name: 'FinanceFlow', initials: 'FF' },
-    { id: 5, name: 'DataSync', initials: 'DS' },
-    { id: 6, name: 'CodeForce', initials: 'CF' },
+    { name: 'NexaCore', logo: 'NC' },
+    { name: 'Velocity', logo: 'VL' },
+    { name: 'Quantum', logo: 'QM' },
+    { name: 'ApexData', logo: 'AD' },
+    { name: 'EnviroTech', logo: 'ET' },
+    { name: 'Stellar', logo: 'ST' },
   ]
 
-  const [hoveredId, setHoveredId] = useState(null)
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  }
-
   return (
-    <section className="py-16 bg-gradient-to-br from-gray-50 via-meltgreen/5 to-slate-100 relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-deep-space/4 rounded-full blur-3xl" />
-      </div>
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl font-bold text-deep-space mb-3">
-            Trusted by Industry Leaders
-          </h2>
-          <p className="text-gray-600">
-            Partnered with forward-thinking companies scaling at pace.
-          </p>
-        </motion.div>
-
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6"
-        >
-          {partners.map((partner) => (
-            <motion.div
-              key={partner.id}
-              variants={itemVariants}
-              whileHover={{ scale: 1.05 }}
-              onHoverStart={() => setHoveredId(partner.id)}
-              onHoverEnd={() => setHoveredId(null)}
-              className="flex items-center justify-center p-6 rounded-lg border border-gray-200 bg-white cursor-pointer transition-smooth"
-            >
-              <div
-                className={`text-center transition-all duration-300 ${
-                  hoveredId === partner.id
-                    ? 'text-meltgreen font-bold'
-                    : 'text-gray-400 font-semibold'
-                }`}
+    <section className="py-24 bg-white border-y border-gray-100 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <p className="text-center text-[10px] uppercase tracking-[0.4em] font-bold text-deep-space/40 mb-16">
+          Strategic Partners & Sponsors
+        </p>
+        
+        <div className="relative flex overflow-hidden">
+          <motion.div
+            animate={{ x: [0, -1000] }}
+            transition={{
+              x: {
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: 20,
+                ease: "linear",
+              },
+            }}
+            className="flex gap-24 items-center whitespace-nowrap"
+          >
+            {[...partners, ...partners].map((partner, i) => (
+              <motion.div
+                key={i}
+                className="flex items-center gap-4 group cursor-pointer"
+                whileHover={{ scale: 1.1 }}
               >
-                <div className="text-2xl mb-2 font-mono">{partner.initials}</div>
-                <div className="text-xs whitespace-nowrap">{partner.name}</div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+                <div className="w-14 h-14 rounded-xl border border-gray-100 flex items-center justify-center bg-gray-50 group-hover:bg-deep-space group-hover:border-deep-space transition-all duration-300">
+                  <span className="text-xl font-black text-gray-300 group-hover:text-meltgreen grayscale group-hover:grayscale-0 transition-all duration-300">
+                    {partner.logo}
+                  </span>
+                </div>
+                <span className="text-xl font-bold text-gray-300 group-hover:text-deep-space transition-all duration-300">
+                  {partner.name}
+                </span>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
       </div>
     </section>
   )
