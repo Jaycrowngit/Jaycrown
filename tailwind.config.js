@@ -4,11 +4,21 @@ export default {
     "./index.html",
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
         'deep-space': '#0A192F',
-        'meltgreen': '#2DFFC4',
+        'meltgreen':  '#2DFFC4',
+        // HR-Tech palette
+        'hr-dark':   '#050c18',
+        'hr-navy':   '#060f1e',
+        'hr-navy2':  '#08152a',
+        'hr-cyan':   '#2dffc4',
+        'hr-blue':   '#00e5ff',
+        'hr-teal':   '#00b4d8',
+        'hr-violet': '#a78bfa',
+        'hr-amber':  '#fbbf24',
       },
       fontFamily: {
         'sans': ['Inter', 'system-ui', 'sans-serif'],

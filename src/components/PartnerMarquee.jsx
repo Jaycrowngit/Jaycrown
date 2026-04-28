@@ -1,72 +1,57 @@
 import { motion } from 'framer-motion'
 
+const partners = [
+  { name: 'Raolak Properties', logoSrc: '/rpllogo.png', scale: 'scale-[1.65]' },
+  { name: 'Brainaics Africa',  logoSrc: '/brainaics-logo.png' },
+  { name: 'myTrader',          abbr: 'MT' },
+  { name: 'MobileNig',        logoSrc: '/mobilenig_logo.png', scale: 'scale-[1.3]' },
+  { name: 'Rayy Varieties',   logoSrc: '/rayy.png', scale: 'scale-[1.2]' },
+  { name: 'Raolak Event',     abbr: 'RE' },
+]
+
+function Logo({ p }) {
+  return (
+    <motion.div whileHover={{ scale: 1.08 }}
+      className="flex items-center gap-3 cursor-pointer group shrink-0">
+      <div className={`w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center border transition-colors duration-300 ${
+        p.logoSrc
+          ? 'bg-white border-white/10'
+          : 'bg-white/5 border-white/8 group-hover:border-[#2dffc4]/30'
+      }`}>
+        {p.logoSrc
+          ? <img src={p.logoSrc} alt={p.name} className={`w-full h-full object-contain ${p.scale || ''}`} />
+          : <span className="text-xs font-black text-white/40 group-hover:text-[#2dffc4] transition-colors">{p.abbr}</span>
+        }
+      </div>
+      <span className="text-sm font-semibold text-white/30 group-hover:text-white/60 transition-colors tracking-wide whitespace-nowrap">
+        {p.name}
+      </span>
+    </motion.div>
+  )
+}
+
 export default function PartnerMarquee() {
-  const partners = [
-    {
-      name: 'RAOLAK PROPERTIES LTD',
-      logo: '',
-      logoSrc: '/rpllogo.png',
-      logoClassName: 'scale-[1.7]',
-    },
-    { name: 'Velocity', logo: 'VL' },
-    { name: 'Quantum', logo: 'QM' },
-    { name: 'ApexData', logo: 'AD' },
-    { name: 'EnviroTech', logo: 'ET' },
-    { name: 'Stellar', logo: 'ST' },
-  ]
+  const doubled = [...partners, ...partners, ...partners]
 
   return (
-    <section className="py-24 bg-white border-y border-gray-100 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <p className="text-center text-[10px] uppercase tracking-[0.4em] font-bold text-deep-space/40 mb-16">
-          Strategic Partners & Sponsors
-        </p>
-        
-        <div className="relative flex overflow-hidden">
-          <motion.div
-            animate={{ x: [0, -1000] }}
-            transition={{
-              x: {
-                repeat: Infinity,
-                repeatType: "loop",
-                duration: 20,
-                ease: "linear",
-              },
-            }}
-            className="flex gap-24 items-center whitespace-nowrap"
-          >
-            {[...partners, ...partners].map((partner, i) => (
-              <motion.div
-                key={i}
-                className="flex items-center gap-4 group cursor-pointer"
-                whileHover={{ scale: 1.1 }}
-              >
-                <div
-                  className={`w-14 h-14 rounded-xl border border-gray-100 flex items-center justify-center overflow-hidden transition-all duration-300 ${
-                    partner.logoSrc
-                      ? 'bg-white p-2'
-                      : 'bg-gray-50 group-hover:bg-deep-space group-hover:border-deep-space'
-                  }`}
-                >
-                  {partner.logoSrc ? (
-                    <img
-                      src={partner.logoSrc}
-                      alt={`${partner.name} logo`}
-                      className={`h-full w-full object-contain ${partner.logoClassName || ''}`}
-                    />
-                  ) : (
-                    <span className="text-xl font-black text-gray-300 group-hover:text-meltgreen grayscale group-hover:grayscale-0 transition-all duration-300">
-                      {partner.logo}
-                    </span>
-                  )}
-                </div>
-                <span className="text-xl font-bold text-gray-300 group-hover:text-deep-space transition-all duration-300">
-                  {partner.name}
-                </span>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
+    <section className="relative py-14 overflow-hidden border-y border-theme transition-colors duration-500 bg-theme-secondary">
+      {/* Refined Gradient Mask for smooth edges */}
+      <div className="absolute inset-y-0 left-0 w-32 z-10 pointer-events-none" 
+        style={{ background: 'linear-gradient(to right, var(--bg-secondary), transparent)' }} />
+      <div className="absolute inset-y-0 right-0 w-32 z-10 pointer-events-none" 
+        style={{ background: 'linear-gradient(to left, var(--bg-secondary), transparent)' }} />
+      
+      <p className="text-center text-[9px] uppercase tracking-[0.4em] font-black text-theme-muted mb-10">
+        Engineered for leaders
+      </p>
+
+      <div className="flex overflow-hidden">
+        <motion.div
+          className="flex gap-14 items-center"
+          animate={{ x: ['0%', '-33.33%'] }}
+          transition={{ duration: 28, ease: 'linear', repeat: Infinity }}>
+          {doubled.map((p, i) => <Logo key={i} p={p} />)}
+        </motion.div>
       </div>
     </section>
   )

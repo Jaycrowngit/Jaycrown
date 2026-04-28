@@ -9,6 +9,7 @@ const SubmissionsDashboard = lazy(() => import('./pages/SubmissionsDashboard'))
 
 function App() {
   const [isLoading, setIsLoading] = useState(true)
+  const [darkMode, setDarkMode] = useState(true)
 
   useEffect(() => {
     // Artificial delay to show the beautiful loader
@@ -16,14 +17,22 @@ function App() {
     return () => clearTimeout(timer)
   }, [])
 
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [darkMode])
+
   if (isLoading) {
     return <LoadingScreen />
   }
 
   return (
     <Router>
-      <div className="min-h-screen bg-white flex flex-col font-sans selection:bg-meltgreen/30 selection:text-deep-space">
-        <Navigation />
+      <div className="min-h-screen flex flex-col font-sans transition-colors duration-500 bg-theme-primary text-theme-primary">
+        <Navigation darkMode={darkMode} setDarkMode={setDarkMode} />
         <main className="flex-grow">
           <Suspense fallback={<LoadingScreen />}>
             <Routes>
