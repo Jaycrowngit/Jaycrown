@@ -39,30 +39,12 @@ const services = [
 export default function ServicesSection() {
   return (
     <section id="services" className="relative py-28 overflow-hidden transition-colors duration-500 bg-theme-primary">
-      {/* High-tech background image */}
-      <div 
-        className="absolute inset-0 z-0 dark:opacity-20 opacity-10 grayscale"
-        style={{ 
-          backgroundImage: 'url(/high_tech_abstract_background_1777401170245.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
-      
-      {/* Gradient Overlay for blending */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-theme-primary via-transparent to-theme-primary opacity-80" />
-
-      {/* Decorative grid */}
-      <div className="absolute inset-0 z-0 opacity-[0.028]" style={{
-        backgroundImage: 'linear-gradient(rgba(45,255,196,1) 1px,transparent 1px),linear-gradient(90deg,rgba(45,255,196,1) 1px,transparent 1px)',
-        backgroundSize: '40px 40px',
-      }} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
         
         {/* header */}
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.7 }}
+          viewport={{ once: false }} transition={{ duration: 0.7 }}
           className="mb-16">
           <p className="text-[11px] font-bold tracking-[0.28em] uppercase text-[#2dffc4] mb-4">Core Disciplines</p>
           <h2 className="text-3xl md:text-5xl font-black text-theme-primary tracking-tight leading-[1.1] uppercase">

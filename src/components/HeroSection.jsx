@@ -77,9 +77,6 @@ const specializations = ['Full-Stack Engineers', 'Mobile Architects', 'Cloud Spe
 
 export default function HeroSection() {
   const typedSpecialization = useTypewriter(specializations)
-  const mx = useMotionValue(0), my = useMotionValue(0)
-  const sx = useSpring(mx, { stiffness: 30, damping: 20 })
-  const sy = useSpring(my, { stiffness: 30, damping: 20 })
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -102,25 +99,10 @@ export default function HeroSection() {
   }
 
   return (
-    <section
-      onMouseMove={e => { mx.set((e.clientX / window.innerWidth - 0.5) * 20); my.set((e.clientY / window.innerHeight - 0.5) * 15) }}
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden transition-colors duration-500 bg-theme-primary"
-    >
+    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden transition-colors duration-500 bg-theme-primary">
       {/* Background Layers */}
       <div className="absolute inset-0 z-0">
         <Particles />
-        <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.02] opacity-[0.05]" style={{
-          backgroundImage: 'linear-gradient(rgba(45,255,196,1) 1px,transparent 1px),linear-gradient(90deg,rgba(45,255,196,1) 1px,transparent 1px)',
-          backgroundSize: '80px 80px',
-        }} />
-        
-        {/* Subtle Ambient Glows */}
-        <motion.div 
-          style={{ x: sx, y: sy }}
-          className="absolute top-1/4 right-1/4 w-[600px] h-[600px] rounded-full opacity-[0.05] dark:opacity-[0.05] opacity-[0.02] pointer-events-none blur-[120px]"
-        >
-          <div className="w-full h-full rounded-full" style={{ background: 'radial-gradient(circle, #2dffc4, transparent 70%)' }} />
-        </motion.div>
       </div>
 
       {/* Main Content */}

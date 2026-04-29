@@ -84,9 +84,19 @@ export default function Navigation({ darkMode, setDarkMode }) {
               style={{ background: 'linear-gradient(90deg,#2dffc4,#00e5ff)', boxShadow: '0 0 20px rgba(45,255,196,0.25)' }}>
               Hire a Dev
             </a>
+          </div>
 
-            {/* Mobile toggle */}
-            <button className={`md:hidden p-2 rounded-lg transition-all ${
+          {/* Mobile toggle & Dark mode */}
+          <div className="flex md:hidden items-center gap-3">
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className={`p-2 rounded-xl transition-all duration-300 ${
+                darkMode ? 'bg-white/5 text-white/70 hover:bg-white/10' : 'bg-[#050c18]/5 text-[#050c18]/70 hover:bg-[#050c18]/10'
+              }`}
+            >
+              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+            <button className={`p-2 rounded-lg transition-all ${
               darkMode ? 'text-white/60 hover:text-white hover:bg-white/8' : 'text-[#050c18]/60 hover:text-[#050c18] hover:bg-[#050c18]/8'
             }`}
               onClick={() => setIsOpen(!isOpen)}>
@@ -101,23 +111,25 @@ export default function Navigation({ darkMode, setDarkMode }) {
         {isOpen && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-            className="md:hidden border-t border-white/5 overflow-hidden"
-            style={{ background: '#060f1e' }}>
+            className={`md:hidden border-t overflow-hidden ${darkMode ? 'border-white/5' : 'border-black/5'}`}
+            style={{ background: darkMode ? '#060f1e' : '#ffffff' }}>
             <div className="px-6 py-6 flex flex-col gap-1">
               {navLinks.map((link, i) => (
                 <motion.a key={link.label} href={link.href}
                   initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.06 }}
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-white/60 hover:text-white hover:bg-white/5 font-semibold text-sm uppercase tracking-wider transition-all">
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm uppercase tracking-wider transition-all ${
+                    darkMode ? 'text-white/60 hover:text-white hover:bg-white/5' : 'text-black/60 hover:text-black hover:bg-black/5'
+                  }`}>
                   <span className="w-1 h-1 rounded-full bg-[#2dffc4]" />
                   {link.label}
                 </motion.a>
               ))}
-              <div className="h-px bg-white/5 my-3" />
+              <div className={`h-px my-3 ${darkMode ? 'bg-white/5' : 'bg-black/5'}`} />
               <a href="/#inquiry" onClick={() => setIsOpen(false)}
-                className="w-full py-3.5 rounded-xl text-center font-bold text-sm text-[#060f1e]"
-                style={{ background: 'linear-gradient(90deg,#2dffc4,#00e5ff)' }}>
+                className={`w-full py-3.5 rounded-xl text-center font-bold text-sm ${darkMode ? 'text-[#060f1e]' : 'text-white'}`}
+                style={{ background: darkMode ? 'linear-gradient(90deg,#2dffc4,#00e5ff)' : '#050c18' }}>
                 Hire a Developer
               </a>
             </div>

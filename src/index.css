@@ -7,8 +7,8 @@
   --bg-secondary: #fafafa;
   --bg-tertiary: #f8f9fa;
   --text-primary: #050c18;
-  --text-secondary: rgba(5, 12, 24, 0.6);
-  --border-primary: rgba(0, 0, 0, 0.05);
+  /* --text-secondary: rgba(5, 12, 24, 0.6);
+  --border-primary: rgba(0, 0, 0, 0.05); */
 }
 
 .dark {
@@ -39,7 +39,7 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Custom Scrollbar */
+Custom Scrollbar
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -54,11 +54,11 @@ html {
   background: rgba(45, 255, 196, 0.4);
 }
 
-@layer utilities {
+/* @layer utilities {
   .bg-theme-primary { background-color: var(--bg-primary); }
   .bg-theme-secondary { background-color: var(--bg-secondary); }
   .bg-theme-tertiary { background-color: var(--bg-tertiary); }
   .text-theme-primary { color: var(--text-primary); }
   .text-theme-secondary { color: var(--text-secondary); }
-  .border-theme { border-color: var(--border-primary); }
-}
+  .border-theme { border-color: var(--border-primary); } */
+/* } */
