@@ -46,7 +46,7 @@ const projects = [
     summary:
       'A robust talent acquisition and registry platform connecting African tech talent with global opportunities. Features automated vetting and placement workflows.',
     stack: ['Laravel', 'PostgreSQL', 'Tailwind CSS', 'Paystack', 'Supabase'],
-    access: [{ label: 'Live Site', href: 'https://brainiacs.africa' }],
+    access: [{ label: 'Live Site', href: 'https://brainaics-africa.onrender.com/' }],
     logoSrc: '/brainaics-logo.png',
     icon: Cpu,
   },
