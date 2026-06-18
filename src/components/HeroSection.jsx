@@ -1,204 +1,308 @@
-import { useEffect, useRef, useState } from 'react'
-import { motion, useMotionValue, useSpring } from 'framer-motion'
-import { ArrowRight, Code2, Layers, Palette, Cpu, ChevronDown } from 'lucide-react'
+import { useEffect, useRef } from 'react'
+import { motion } from 'framer-motion'
+import { ArrowRight, ArrowUpRight } from 'lucide-react'
 
-/* ── helpers ── */
-const rand = (a, b) => Math.random() * (b - a) + a
+/* ─── Floating geometric SVG illustration ─── */
+function HeroIllustration() {
+  return (
+    <div style={{ position: 'relative', width: '100%', maxWidth: '580px' }}>
+      {/* Main geometric composition */}
+      <svg
+        viewBox="0 0 580 520"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ width: '100%', height: 'auto' }}
+      >
+        {/* Grid lines */}
+        <line x1="0" y1="60" x2="580" y2="60" stroke="rgba(8,13,31,0.05)" strokeWidth="1"/>
+        <line x1="0" y1="180" x2="580" y2="180" stroke="rgba(8,13,31,0.05)" strokeWidth="1"/>
+        <line x1="0" y1="300" x2="580" y2="300" stroke="rgba(8,13,31,0.05)" strokeWidth="1"/>
+        <line x1="0" y1="420" x2="580" y2="420" stroke="rgba(8,13,31,0.05)" strokeWidth="1"/>
+        <line x1="60" y1="0" x2="60" y2="520" stroke="rgba(8,13,31,0.05)" strokeWidth="1"/>
+        <line x1="180" y1="0" x2="180" y2="520" stroke="rgba(8,13,31,0.05)" strokeWidth="1"/>
+        <line x1="300" y1="0" x2="300" y2="520" stroke="rgba(8,13,31,0.05)" strokeWidth="1"/>
+        <line x1="420" y1="0" x2="420" y2="520" stroke="rgba(8,13,31,0.05)" strokeWidth="1"/>
+        <line x1="540" y1="0" x2="540" y2="520" stroke="rgba(8,13,31,0.05)" strokeWidth="1"/>
 
-/* ── subtle particle canvas ── */
-function Particles() {
-  const ref = useRef(null)
-  useEffect(() => {
-    const c = ref.current, ctx = c.getContext('2d')
-    let id
-    const resize = () => { c.width = c.offsetWidth; c.height = c.offsetHeight }
-    resize()
-    window.addEventListener('resize', resize)
-    const pts = Array.from({ length: 45 }, () => ({
-      x: rand(0, c.width), y: rand(0, c.height),
-      vx: rand(-0.08, 0.08), vy: rand(-0.08, 0.08),
-      r: rand(0.5, 1.5), a: rand(0.1, 0.35),
-    }))
-    const draw = () => {
-      ctx.clearRect(0, 0, c.width, c.height)
-      pts.forEach(p => {
-        p.x = (p.x + p.vx + c.width) % c.width
-        p.y = (p.y + p.vy + c.height) % c.height
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(45,255,196,${p.a})`; ctx.fill()
-      })
-      for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
-        const d = Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y)
-        if (d < 120) {
-          ctx.beginPath(); ctx.lineWidth = 0.3
-          ctx.strokeStyle = `rgba(45,255,196,${0.04 * (1 - d / 120)})`
-          ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke()
-        }
-      }
-      id = requestAnimationFrame(draw)
-    }
-    draw()
-    return () => { window.removeEventListener('resize', resize); cancelAnimationFrame(id) }
-  }, [])
-  return <canvas ref={ref} className="absolute inset-0 w-full h-full pointer-events-none" />
+        {/* Large navy block — anchor */}
+        <rect x="180" y="120" width="240" height="240" rx="16" fill="#080D1F"/>
+
+        {/* Blue accent square */}
+        <rect x="360" y="60" width="120" height="120" rx="12" fill="#1B4FD8"/>
+
+        {/* Light gray square */}
+        <rect x="60" y="240" width="160" height="160" rx="12" fill="#ECEEF5"/>
+
+        {/* Small blue corner dot */}
+        <circle cx="420" cy="180" r="8" fill="#4B78F0"/>
+
+        {/* Outline rect — bottom right */}
+        <rect x="360" y="320" width="160" height="120" rx="12" fill="none" stroke="#1B4FD8" strokeWidth="1.5" opacity="0.4"/>
+
+        {/* White card floating over navy */}
+        <rect x="200" y="200" width="200" height="120" rx="10" fill="white" style={{ filter: 'drop-shadow(0 8px 24px rgba(8,13,31,0.18))' }}/>
+        <text x="220" y="235" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="22" fill="#080D1F">50+</text>
+        <text x="220" y="255" fontFamily="Inter, sans-serif" fontSize="11" fill="#9AA3BF" letterSpacing="0.08em">ENGINEERS DEPLOYED</text>
+        <line x1="220" y1="272" x2="380" y2="272" stroke="rgba(8,13,31,0.07)" strokeWidth="1"/>
+        <text x="220" y="296" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="22" fill="#1B4FD8">7+</text>
+        <text x="255" y="296" fontFamily="Inter, sans-serif" fontSize="11" fill="#9AA3BF" letterSpacing="0.08em">  LIVE PRODUCTS</text>
+
+        {/* Small tag bottom-left of card */}
+        <rect x="200" y="330" width="84" height="24" rx="6" fill="#EBF0FD"/>
+        <text x="212" y="346" fontFamily="Inter, sans-serif" fontWeight="600" fontSize="10" fill="#1B4FD8">Est. 2019</text>
+
+        {/* Dot cluster — top left */}
+        <circle cx="80" cy="80" r="4" fill="#1B4FD8" opacity="0.5"/>
+        <circle cx="100" cy="80" r="4" fill="#1B4FD8" opacity="0.3"/>
+        <circle cx="120" cy="80" r="4" fill="#1B4FD8" opacity="0.15"/>
+        <circle cx="80" cy="100" r="4" fill="#1B4FD8" opacity="0.3"/>
+        <circle cx="100" cy="100" r="4" fill="#080D1F" opacity="0.12"/>
+
+        {/* Status badge — top right */}
+        <rect x="440" y="200" width="110" height="38" rx="8" fill="white" style={{ filter: 'drop-shadow(0 4px 12px rgba(8,13,31,0.12))' }}/>
+        <circle cx="458" cy="219" r="5" fill="#22C55E"/>
+        <text x="470" y="223" fontFamily="Inter, sans-serif" fontWeight="600" fontSize="10.5" fill="#080D1F">Active</text>
+
+        {/* Bottom status strip */}
+        <rect x="60" y="430" width="460" height="50" rx="10" fill="white" style={{ filter: 'drop-shadow(0 4px 16px rgba(8,13,31,0.08))' }}/>
+        <rect x="80" y="450" width="20" height="10" rx="3" fill="#1B4FD8" opacity="0.8"/>
+        <rect x="108" y="450" width="60" height="10" rx="3" fill="rgba(8,13,31,0.07)"/>
+        <rect x="208" y="450" width="40" height="10" rx="3" fill="rgba(8,13,31,0.07)"/>
+        <rect x="328" y="450" width="80" height="10" rx="3" fill="rgba(27,79,216,0.12)"/>
+        <rect x="428" y="447" width="50" height="16" rx="5" fill="#080D1F"/>
+      </svg>
+    </div>
+  )
 }
 
-/* ── typewriter hook ── */
-function useTypewriter(words, speed = 80, pause = 2500) {
-  const [text, setText] = useState('')
-  const [wi, setWi] = useState(0)
-  const [ci, setCi] = useState(0)
-  const [del, setDel] = useState(false)
-
-  useEffect(() => {
-    const w = words[wi]
-    const t = setTimeout(() => {
-      if (!del) {
-        setText(w.slice(0, ci + 1))
-        ci + 1 === w.length ? setTimeout(() => setDel(true), pause) : setCi(c => c + 1)
-      } else {
-        setText(w.slice(0, ci - 1))
-        ci - 1 === 0 ? (setDel(false), setWi(i => (i + 1) % words.length), setCi(0)) : setCi(c => c - 1)
-      }
-    }, del ? speed / 2 : speed)
-    return () => clearTimeout(t)
-  }, [ci, del, wi, words, speed, pause])
-  return text
-}
-
-const tags = [
-  { icon: Code2,  label: 'Software Engineering' },
-  { icon: Cpu,    label: 'Backend & DevOps' },
-  { icon: Palette, label: 'UI/UX & Product' },
-  { icon: Layers, label: 'Visual Design' },
+const clients = [
+  'Naira4Coin', 'MobileNig', 'Raolak', 'Bubu Browser', 'myTrader', 'Enterprise Co.'
 ]
 
-const specializations = ['Full-Stack Engineers', 'Mobile Architects', 'Cloud Specialists', 'UX Strategists', 'Brand Designers']
+const ctr = {
+  hidden:  { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.10, delayChildren: 0.1 } },
+}
+const itm = {
+  hidden:  { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+}
 
 export default function HeroSection() {
-  const typedSpecialization = useTypewriter(specializations)
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1, 
-      transition: { 
-        staggerChildren: 0.15, 
-        delayChildren: 0.3 
-      } 
-    }
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } 
-    }
-  }
-
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden transition-colors duration-500 bg-theme-primary">
-      {/* Background Layers */}
-      <div className="absolute inset-0 z-0">
-        <Particles />
-      </div>
+    <section
+      className="relative overflow-hidden"
+      style={{
+        background: '#ffffff',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* ── Subtle grid background ── */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(8,13,31,0.035) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(8,13,31,0.035) 1px, transparent 1px)
+          `,
+          backgroundSize: '72px 72px',
+        }}
+      />
 
-      {/* Main Content */}
-      <div className="relative z-10 max-w-5xl mx-auto px-6 lg:px-8 text-center w-full pt-40 pb-20">
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden" 
+      {/* ── Blue top accent ── */}
+      <div
+        className="absolute top-0 left-0 right-0"
+        style={{ height: '3px', background: 'var(--blue)' }}
+      />
+
+      {/* ── Main content ── */}
+      <div
+        style={{
+          flex: 1,
+          maxWidth: '1280px',
+          margin: '0 auto',
+          padding: '0 40px',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '80px',
+          alignItems: 'center',
+          paddingTop: '120px',
+          paddingBottom: '80px',
+          width: '100%',
+        }}
+        className="hero-grid"
+      >
+
+        {/* ── LEFT COPY ── */}
+        <motion.div
+          variants={ctr}
+          initial="hidden"
           animate="visible"
-          className="flex flex-col items-center"
+          style={{ maxWidth: '580px' }}
         >
-          {/* Minimalist Top Label with Typewriter */}
-          <motion.div variants={itemVariants} className="mb-10 flex flex-col items-center gap-4">
-            <span className="text-[10px] font-black tracking-[0.4em] uppercase text-theme-secondary opacity-40 border-b border-theme pb-2">
-              Engineering Collective & Design Studio
-            </span>
-            <div className="flex items-center gap-2 text-[11px] font-bold tracking-widest uppercase text-meltgreen">
-              <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-              Currently Deploying: <span className="text-theme-primary ml-1">{typedSpecialization}</span>
-              <span className="w-[2px] h-[1em] bg-current animate-pulse" />
-            </div>
+          {/* Eyebrow */}
+          <motion.div variants={itm} className="eyebrow">
+            <span className="eyebrow-dot" />
+            B2B Technology Partner
           </motion.div>
 
-          {/* Mature Headline */}
-          <motion.h1 
-            variants={itemVariants}
-            className="font-black text-theme-primary leading-[1.1] tracking-tight mb-8"
-            style={{ fontSize: 'clamp(2.5rem, 8vw, 5rem)' }}
-          >
-            Engineering <span className="opacity-20">the</span> <br />
-            <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(90deg, #2dffc4, #00e5ff)' }}>
-              Digital Frontier.
-            </span>
+          {/* Headline */}
+          <motion.h1 variants={itm} className="heading-xl" style={{ marginBottom: '24px' }}>
+            Engineering software{' '}
+            <span style={{ color: 'var(--blue)', fontStyle: 'italic' }}>that</span>{' '}
+            scales your business.
           </motion.h1>
 
-          {/* Precise Subtitle */}
-          <motion.p 
-            variants={itemVariants}
-            className="max-w-2xl mx-auto leading-relaxed font-medium text-theme-secondary mb-12 text-lg md:text-xl"
+          {/* Sub-copy */}
+          <motion.p
+            variants={itm}
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '17px',
+              lineHeight: 1.7,
+              color: 'var(--text-secondary)',
+              marginBottom: '40px',
+              maxWidth: '480px',
+            }}
           >
-            We deploy elite engineering teams and specialized designers to build 
-            scalable infrastructure and high-conversion digital experiences. 
-            Direct. Precise. Impactful.
+            JaytechHub delivers full-cycle software engineering — from architecture and development 
+            to design and deployment — for organizations that demand precision, reliability, and results.
           </motion.p>
 
-          {/* Refined CTAs */}
-          <motion.div 
-            variants={itemVariants}
-            className="flex flex-col sm:flex-row gap-6 justify-center mb-24"
-          >
-            <a href="#inquiry"
-              className="group relative px-10 py-4 rounded-full font-black text-[13px] uppercase tracking-[0.15em] text-deep-space transition-all duration-300 hover:scale-[1.02] active:scale-95 overflow-hidden shadow-lg"
-              style={{ background: '#2dffc4' }}>
-              <span className="relative z-10">Hire the Hub</span>
-              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
+          {/* CTAs */}
+          <motion.div variants={itm} style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '64px' }}>
+            <a href="/#inquiry" id="hero-cta-primary" className="btn-primary">
+              Work With Us
+              <ArrowRight size={16} />
             </a>
-            <a href="#work"
-              className="group inline-flex items-center justify-center gap-3 px-10 py-4 rounded-full font-black text-[13px] uppercase tracking-[0.15em] text-theme-primary border border-theme hover:border-meltgreen/40 hover:bg-meltgreen/[0.03] transition-all duration-300"
-            >
-              Our Portfolio
-              <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+            <a href="/#work" id="hero-cta-secondary" className="btn-outline">
+              View Our Work
             </a>
           </motion.div>
 
-          {/* Integrated Capability Tags */}
-          <motion.div 
-            variants={itemVariants}
-            className="grid grid-cols-2 md:grid-cols-4 gap-x-12 gap-y-6 opacity-40 hover:opacity-100 transition-opacity duration-500"
-          >
-            {tags.map(({ icon: Icon, label }) => (
-              <div key={label} className="flex flex-col items-center gap-3">
-                <Icon size={18} className="text-meltgreen" strokeWidth={1.5} />
-                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-theme-primary whitespace-nowrap">
-                  {label}
+          {/* Client logos strip */}
+          <motion.div variants={itm}>
+            <p style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '11px',
+              fontWeight: 600,
+              letterSpacing: '0.10em',
+              textTransform: 'uppercase',
+              color: 'var(--text-muted)',
+              marginBottom: '16px',
+            }}>
+              Products We've Built
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {clients.map(c => (
+                <span
+                  key={c}
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    color: 'var(--text-muted)',
+                    padding: '6px 14px',
+                    border: '1px solid var(--border-light)',
+                    borderRadius: '4px',
+                    background: 'var(--bg-secondary)',
+                  }}
+                >
+                  {c}
                 </span>
-              </div>
-            ))}
+              ))}
+            </div>
           </motion.div>
+        </motion.div>
+
+        {/* ── RIGHT ILLUSTRATION ── */}
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="hidden lg:flex justify-end"
+        >
+          <HeroIllustration />
         </motion.div>
       </div>
 
-      {/* Subtle Scroll Cue */}
-      <motion.div 
-        initial={{ opacity: 0 }} 
-        animate={{ opacity: 1 }} 
-        transition={{ delay: 3, duration: 1 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 text-theme-secondary opacity-20 pointer-events-none"
+      {/* ── Bottom stat strip ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8, duration: 0.6 }}
+        style={{
+          borderTop: '1px solid var(--border-light)',
+          background: 'var(--bg-secondary)',
+        }}
       >
-        <span className="text-[8px] uppercase tracking-[0.5em] font-black">Explore</span>
-        <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}>
-          <ChevronDown size={14} />
-        </motion.div>
+        <div
+          style={{
+            maxWidth: '1280px',
+            margin: '0 auto',
+            padding: '0 40px',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: '1px',
+          }}
+          className="stat-strip"
+        >
+          {[
+            // { v: '20', l: 'Year Founded' },
+            // { v: '50+',  l: 'Engineers Deployed' },
+            // { v: '7+',   l: 'Products Shipped' },
+            // { v: '100%', l: 'Client Satisfaction' },
+          ].map((s, i) => (
+            <div
+              key={s.l}
+              style={{
+                padding: '28px 32px',
+                borderRight: i < 3 ? '1px solid var(--border-light)' : 'none',
+              }}
+            >
+              <p style={{
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 800,
+                fontSize: '2rem',
+                color: 'var(--text-primary)',
+                letterSpacing: '-0.02em',
+                lineHeight: 1,
+                marginBottom: '6px',
+              }}>
+                {s.v}
+              </p>
+              <p style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '12px',
+                fontWeight: 500,
+                color: 'var(--text-muted)',
+                letterSpacing: '0.04em',
+              }}>
+                {s.l}
+              </p>
+            </div>
+          ))}
+        </div>
       </motion.div>
 
-      {/* Soft Bottom Mask */}
-      <div className="absolute bottom-0 inset-x-0 h-40 pointer-events-none"
-        style={{ background: 'linear-gradient(to top, var(--bg-primary), transparent)' }} />
+      {/* ── Responsive styles ── */}
+      <style>{`
+        @media (max-width: 1024px) {
+          .hero-grid {
+            grid-template-columns: 1fr !important;
+            gap: 40px !important;
+            padding-top: 100px !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .hero-grid { padding: 90px 20px 60px !important; }
+          .stat-strip {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+      `}</style>
     </section>
   )
 }

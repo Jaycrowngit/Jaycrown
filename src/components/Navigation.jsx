@@ -1,136 +1,252 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Sun, Moon } from 'lucide-react'
+import { Menu, X, ChevronDown, ArrowRight } from 'lucide-react'
 
-const navLinks = [
-  { label: 'Services',    href: '/#services' },
-  { label: 'Our Work',    href: '/#work' },
-  { label: 'About',       href: '/#about' },
-  { label: 'Contact',     href: '/#inquiry' },
+const services = [
+  { label: 'Web Development', desc: 'Enterprise web applications & SaaS platforms' },
+  { label: 'Mobile Apps', desc: 'iOS & Android native and cross-platform' },
+  { label: 'UI/UX Design', desc: 'Product design from research to pixel-perfect' },
+  { label: 'DevOps & Cloud', desc: 'Infrastructure, CI/CD, and cloud architecture' },
+  { label: 'Graphic Design', desc: 'Brand identity, visual systems, motion' },
+  { label: 'Full-Stack Teams', desc: 'Dedicated engineering squads on demand' },
 ]
 
-export default function Navigation({ darkMode, setDarkMode }) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-  const [active, setActive] = useState(null)
+const navLinks = [
+  { label: 'Services', hasDropdown: true },
+  { label: 'About',    href: '/#about' },
+  { label: 'Work',     href: '/#work' },
+  { label: 'Insights', href: '/#insights' },
+  { label: 'Careers',  href: '/#careers' },
+]
+
+export default function Navigation() {
+  const [isOpen,         setIsOpen]         = useState(false)
+  const [scrolled,       setScrolled]       = useState(false)
+  const [servicesOpen,   setServicesOpen]   = useState(false)
 
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 40)
+    const fn = () => setScrolled(window.scrollY > 32)
     window.addEventListener('scroll', fn)
     return () => window.removeEventListener('scroll', fn)
   }, [])
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-400 ${
-      scrolled
-        ? 'py-3 border-b border-theme'
-        : 'py-5'
-    }`} style={{ 
-      background: scrolled ? 'var(--bg-primary)' : 'transparent', 
-      backdropFilter: scrolled ? 'blur(20px)' : 'none',
-      opacity: scrolled ? 0.96 : 1
-    }}>
-      <div className="max-w-6xl mx-auto px-6 lg:px-8">
-        <div className="flex items-center justify-between">
+    <nav
+      id="main-nav"
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'py-0' : 'py-0'}`}
+      style={{
+        background: scrolled ? 'rgba(255,255,255,0.97)' : 'rgba(255,255,255,0.97)',
+        backdropFilter: 'blur(20px)',
+        borderBottom: `1px solid ${scrolled ? 'rgba(8,13,31,0.10)' : 'rgba(8,13,31,0.07)'}`,
+        boxShadow: scrolled ? '0 2px 20px rgba(8,13,31,0.06)' : 'none',
+      }}
+    >
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 40px' }}>
+        <div className="flex items-center justify-between" style={{ height: '68px' }}>
 
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="relative w-8 h-8 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-lg opacity-30 group-hover:opacity-60 transition-opacity blur-md"
-                style={{ background: 'linear-gradient(135deg,#2dffc4,#00e5ff)' }} />
-              <div className="relative w-8 h-8 rounded-lg flex items-center justify-center shadow-sm"
-                style={{ background: 'linear-gradient(135deg,#2dffc4,#00b4d8)' }}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M2 12V8M5.5 12V4M9 12V7M12.5 12V2" stroke="#060f1e" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              </div>
+          {/* ── Logo ── */}
+          <Link to="/" id="nav-logo" className="flex items-center gap-3 group" style={{ textDecoration: 'none' }}>
+            <div
+              className="flex items-center justify-center"
+              style={{
+                width: '32px', height: '32px', borderRadius: '6px',
+                background: 'var(--navy)',
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <rect x="1" y="7" width="3" height="6" rx="1" fill="white" opacity="0.5"/>
+                <rect x="5.5" y="4" width="3" height="9" rx="1" fill="white" opacity="0.75"/>
+                <rect x="10" y="1" width="3" height="12" rx="1" fill="white"/>
+              </svg>
             </div>
-            <span className="text-xl font-black tracking-tighter text-theme-primary">
-              JAYTECH<span className="text-meltgreen">HUB</span>
+            <span style={{
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 800,
+              fontSize: '1.05rem',
+              letterSpacing: '-0.02em',
+              color: 'var(--navy)',
+            }}>
+              JAYTECH<span style={{ color: 'var(--blue)' }}>HUB</span>
             </span>
           </Link>
 
-          {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-10">
-            {[
-              { name: 'Services', href: '#services' },
-              { name: 'Work', href: '#work' },
-              { name: 'About', href: '#about' },
-            ].map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className="text-[11px] font-black uppercase tracking-[0.2em] text-theme-secondary hover:text-meltgreen transition-colors"
-              >
-                {link.name}
-              </a>
+          {/* ── Desktop Nav Links ── */}
+          <div className="hidden md:flex items-center" style={{ gap: '2px' }}>
+            {navLinks.map(link => (
+              link.hasDropdown ? (
+                <div
+                  key={link.label}
+                  className="relative"
+                  onMouseEnter={() => setServicesOpen(true)}
+                  onMouseLeave={() => setServicesOpen(false)}
+                >
+                  <button
+                    className="flex items-center gap-1.5 px-4 py-2 rounded transition-colors"
+                    style={{
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '13px',
+                      fontWeight: 500,
+                      color: servicesOpen ? 'var(--blue)' : 'var(--text-secondary)',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {link.label}
+                    <ChevronDown size={13} style={{ transition: 'transform 0.2s', transform: servicesOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
+                  </button>
+
+                  <AnimatePresence>
+                    {servicesOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 8 }}
+                        transition={{ duration: 0.18 }}
+                        style={{
+                          position: 'absolute',
+                          top: 'calc(100% + 4px)',
+                          left: '-20px',
+                          width: '360px',
+                          background: '#ffffff',
+                          border: '1px solid rgba(8,13,31,0.08)',
+                          borderRadius: '12px',
+                          boxShadow: '0 20px 60px rgba(8,13,31,0.12)',
+                          padding: '12px',
+                          zIndex: 100,
+                        }}
+                      >
+                        {services.map(s => (
+                          <a
+                            key={s.label}
+                            href="/#services"
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '2px',
+                              padding: '10px 14px',
+                              borderRadius: '8px',
+                              textDecoration: 'none',
+                              transition: 'background 0.15s',
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-secondary)'}
+                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                          >
+                            <span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '13px', color: 'var(--text-primary)' }}>
+                              {s.label}
+                            </span>
+                            <span style={{ fontFamily: 'Inter', fontSize: '11.5px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                              {s.desc}
+                            </span>
+                          </a>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="px-4 py-2 rounded transition-colors"
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '13px',
+                    fontWeight: 500,
+                    color: 'var(--text-secondary)',
+                    textDecoration: 'none',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-primary)' }}
+                  onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)' }}
+                >
+                  {link.label}
+                </a>
+              )
             ))}
-            
-            <div className="h-4 w-px bg-theme-primary opacity-10 mx-2" />
+          </div>
 
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className={`p-2 rounded-xl transition-all duration-300 ${
-                darkMode ? 'bg-white/5 text-white/70 hover:bg-white/10' : 'bg-[#050c18]/5 text-[#050c18]/70 hover:bg-[#050c18]/10'
-              }`}
+          {/* ── Desktop CTA ── */}
+          <div className="hidden md:flex items-center gap-3">
+            <a
+              href="/#inquiry"
+              id="nav-cta"
+              className="btn-primary"
+              style={{ padding: '10px 22px', fontSize: '12.5px' }}
             >
-              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-
-            {/* CTA */}
-            <a href="/#inquiry"
-              className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[11.5px] font-bold uppercase tracking-[0.1em] text-[#060f1e] transition-transform hover:-translate-y-0.5 active:scale-95"
-              style={{ background: 'linear-gradient(90deg,#2dffc4,#00e5ff)', boxShadow: '0 0 20px rgba(45,255,196,0.25)' }}>
-              Hire a Dev
+              Get in Touch
+              <ArrowRight size={14} />
             </a>
           </div>
 
-          {/* Mobile toggle & Dark mode */}
-          <div className="flex md:hidden items-center gap-3">
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className={`p-2 rounded-xl transition-all duration-300 ${
-                darkMode ? 'bg-white/5 text-white/70 hover:bg-white/10' : 'bg-[#050c18]/5 text-[#050c18]/70 hover:bg-[#050c18]/10'
-              }`}
-            >
-              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-            <button className={`p-2 rounded-lg transition-all ${
-              darkMode ? 'text-white/60 hover:text-white hover:bg-white/8' : 'text-[#050c18]/60 hover:text-[#050c18] hover:bg-[#050c18]/8'
-            }`}
-              onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
-          </div>
+          {/* ── Mobile Hamburger ── */}
+          <button
+            id="mobile-menu-btn"
+            onClick={() => setIsOpen(!isOpen)}
+            className="flex md:hidden items-center justify-center"
+            style={{
+              width: '40px', height: '40px',
+              border: '1px solid var(--border-light)',
+              borderRadius: '8px',
+              background: 'transparent',
+              cursor: 'pointer',
+              color: 'var(--text-primary)',
+            }}
+          >
+            {isOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
         </div>
       </div>
 
-      {/* Mobile drawer */}
+      {/* ── Mobile Drawer ── */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-            className={`md:hidden border-t overflow-hidden ${darkMode ? 'border-white/5' : 'border-black/5'}`}
-            style={{ background: darkMode ? '#060f1e' : '#ffffff' }}>
-            <div className="px-6 py-6 flex flex-col gap-1">
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              overflow: 'hidden',
+              background: '#ffffff',
+              borderTop: '1px solid var(--border-light)',
+            }}
+          >
+            <div style={{ padding: '16px 20px 24px' }}>
               {navLinks.map((link, i) => (
-                <motion.a key={link.label} href={link.href}
-                  initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.06 }}
+                <motion.a
+                  key={link.label}
+                  href={link.href || '/#services'}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}
                   onClick={() => setIsOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm uppercase tracking-wider transition-all ${
-                    darkMode ? 'text-white/60 hover:text-white hover:bg-white/5' : 'text-black/60 hover:text-black hover:bg-black/5'
-                  }`}>
-                  <span className="w-1 h-1 rounded-full bg-[#2dffc4]" />
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '12px 14px',
+                    borderRadius: '8px',
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 600,
+                    fontSize: '14px',
+                    color: 'var(--text-primary)',
+                    textDecoration: 'none',
+                    transition: 'background 0.15s',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-secondary)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
                   {link.label}
                 </motion.a>
               ))}
-              <div className={`h-px my-3 ${darkMode ? 'bg-white/5' : 'bg-black/5'}`} />
-              <a href="/#inquiry" onClick={() => setIsOpen(false)}
-                className={`w-full py-3.5 rounded-xl text-center font-bold text-sm ${darkMode ? 'text-[#060f1e]' : 'text-white'}`}
-                style={{ background: darkMode ? 'linear-gradient(90deg,#2dffc4,#00e5ff)' : '#050c18' }}>
-                Hire a Developer
+              <div style={{ height: '1px', background: 'var(--border-light)', margin: '12px 0' }} />
+              <a
+                href="/#inquiry"
+                onClick={() => setIsOpen(false)}
+                className="btn-primary"
+                style={{ width: '100%', justifyContent: 'center', borderRadius: '8px' }}
+              >
+                Get in Touch
               </a>
             </div>
           </motion.div>

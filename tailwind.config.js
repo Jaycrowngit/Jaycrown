@@ -8,34 +8,44 @@ export default {
   theme: {
     extend: {
       colors: {
-        'deep-space': '#0A192F',
-        'meltgreen':  '#2DFFC4',
-        // HR-Tech palette
-        'hr-dark':   '#050c18',
-        'hr-navy':   '#060f1e',
-        'hr-navy2':  '#08152a',
-        'hr-cyan':   '#2dffc4',
-        'hr-blue':   '#00e5ff',
-        'hr-teal':   '#00b4d8',
-        'hr-violet': '#a78bfa',
-        'hr-amber':  '#fbbf24',
+        'royal':        '#2952FF',
+        'royal-dark':   '#1a3dd4',
+        'royal-deeper': '#0f28a8',
+        'royal-light':  '#6b8fff',
+        'royal-pale':   '#dce6ff',
+        'royal-ghost':  '#f0f4ff',
+        'snow':         '#f7f8fc',
+        'ink':          '#0d1535',
+        'ink-soft':     '#2a3560',
+        /* legacy aliases — keep so LiveLab still works */
+        'deep-space':   '#0d1535',
+        'meltgreen':    '#2952FF',
+        'periwinkle':   '#6b8fff',
+        'rich-black':   '#0d1535',
       },
       fontFamily: {
-        'sans': ['Inter', 'system-ui', 'sans-serif'],
+        'sans':    ['\'Inter\'', 'system-ui', 'sans-serif'],
+        'display': ['\'Inter\'', 'system-ui', 'sans-serif'],
+        'serif':   ['\'Inter\'', 'system-ui', 'sans-serif'],
       },
       keyframes: {
-        'pulse-glow': {
-          '0%, 100%': { opacity: '1', boxShadow: '0 0 10px rgba(45, 255, 196, 0.5)' },
-          '50%': { opacity: '0.8', boxShadow: '0 0 20px rgba(45, 255, 196, 0.8)' },
+        'shimmer-blue': {
+          '0%':   { backgroundPosition: '-200% center' },
+          '100%': { backgroundPosition:  '200% center' },
         },
         'float': {
           '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-10px)' },
+          '50%':      { transform: 'translateY(-8px)' },
+        },
+        'fade-up': {
+          '0%':   { opacity: '0', transform: 'translateY(14px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },
       animation: {
-        'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'float': 'float 3s ease-in-out infinite',
+        'shimmer-blue': 'shimmer-blue 4s linear infinite',
+        'float':        'float 4s ease-in-out infinite',
+        'fade-up':      'fade-up 0.6s ease forwards',
       },
     },
   },

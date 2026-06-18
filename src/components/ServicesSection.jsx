@@ -1,119 +1,188 @@
 import { motion } from 'framer-motion'
-import { Globe, Smartphone, PenTool, Layers, ArrowRight } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 
 const services = [
   {
-    icon: Globe,
+    num: '01',
     title: 'Web Development',
-    desc: 'Custom web applications built with modern frameworks — from landing pages to complex SaaS platforms.',
-    tags: ['React', 'Next.js', 'Node.js'],
-    accent: '#2dffc4',
-    span: 'lg:col-span-2',
+    desc: 'Enterprise-grade web applications, SaaS platforms, and complex system integrations built on modern, scalable infrastructure.',
+    tags: ['React', 'Next.js', 'Node.js', 'TypeScript'],
   },
   {
-    icon: Smartphone,
-    title: 'Mobile Apps',
-    desc: 'Cross-platform mobile apps with native performance on iOS and Android.',
-    tags: ['Flutter', 'React Native'],
-    accent: '#00e5ff',
-    span: '',
+    num: '02',
+    title: 'Mobile Applications',
+    desc: 'Native-quality cross-platform mobile apps that perform flawlessly on iOS and Android from a single unified codebase.',
+    tags: ['Flutter', 'React Native', 'Swift', 'Kotlin'],
   },
   {
-    icon: PenTool,
+    num: '03',
     title: 'UI/UX Design',
-    desc: 'User-centred interface design — from wireframes to pixel-perfect Figma handoffs.',
-    tags: ['Figma', 'Prototyping'],
-    accent: '#a78bfa',
-    span: '',
+    desc: 'Human-centered product design — from discovery workshops and wireframes to production-ready Figma design systems.',
+    tags: ['Figma', 'Design Systems', 'Research', 'Prototyping'],
   },
   {
-    icon: Layers,
-    title: 'Graphic Design',
-    desc: 'Brand identity, social media content, motion graphics, and visual storytelling.',
-    tags: ['Branding', 'Motion', 'Social'],
-    accent: '#fbbf24',
-    span: 'lg:col-span-2',
+    num: '04',
+    title: 'DevOps & Cloud',
+    desc: 'Cloud architecture, CI/CD pipelines, container orchestration, and infrastructure automation that eliminate deployment friction.',
+    tags: ['AWS', 'GCP', 'Docker', 'Kubernetes'],
+  },
+  {
+    num: '05',
+    title: 'Visual Design',
+    desc: 'Brand identity systems, motion graphics, marketing collateral, and visual storytelling that position your organization authoritatively.',
+    tags: ['Branding', 'Motion', 'Print', 'Social'],
+  },
+  {
+    num: '06',
+    title: 'Dedicated Teams',
+    desc: 'Fully managed engineering squads embedded in your organization — scoped, staffed, and led to ship your roadmap on schedule.',
+    tags: ['Staffing', 'Agile', 'Technical Lead', 'QA'],
   },
 ]
 
 export default function ServicesSection() {
   return (
-    <section id="services" className="relative py-28 overflow-hidden transition-colors duration-500 bg-theme-primary">
+    <section
+      id="services"
+      style={{
+        background: 'var(--bg-dark)',
+        padding: '100px 0',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Grid background */}
+      <div className="grid-bg-dark absolute inset-0 pointer-events-none" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
-        
-        {/* header */}
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }} transition={{ duration: 0.7 }}
-          className="mb-16">
-          <p className="text-[11px] font-bold tracking-[0.28em] uppercase text-[#2dffc4] mb-4">Core Disciplines</p>
-          <h2 className="text-3xl md:text-5xl font-black text-theme-primary tracking-tight leading-[1.1] uppercase">
-            Specialized Skills <br className="hidden md:block" /> for global impact.
-          </h2>
-        </motion.div>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 40px', position: 'relative', zIndex: 1 }}>
 
-        {/* grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {services.map((s, i) => {
-            const Icon = s.icon
-            return (
-              <motion.div key={s.title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ delay: i * 0.09, duration: 0.65 }}
-                className={`group relative rounded-2xl border border-theme p-7 cursor-pointer transition-all duration-400 hover:border-white/16 ${s.span}`}
-                style={{ background: 'rgba(255,255,255,0.02)' }}>
-
-                {/* corner accent glow */}
-                <div className="absolute top-0 left-0 w-16 h-16 rounded-tl-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
-                  style={{ background: `radial-gradient(circle,${s.accent}22,transparent 70%)` }} />
-
-                <div className="relative z-10 flex flex-col gap-5 h-full justify-between">
-                  <div>
-                    {/* icon */}
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110"
-                      style={{ background: `${s.accent}14` }}>
-                      <Icon size={18} style={{ color: s.accent }} />
-                    </div>
-                    <h3 className="text-lg font-bold text-theme-primary mb-2">{s.title}</h3>
-                    <p className="text-sm text-theme-secondary leading-relaxed font-medium">{s.desc}</p>
-                  </div>
-
-                  <div className="flex items-center justify-between mt-4">
-                    {/* tags */}
-                    <div className="flex flex-wrap gap-1.5">
-                      {s.tags.map(t => (
-                        <span key={t} className="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full border border-white/8 text-white/35">{t}</span>
-                      ))}
-                    </div>
-                    {/* arrow */}
-                    <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:border-white/25 group-hover:translate-x-1"
-                      style={{ color: s.accent }}>
-                      <ArrowRight size={14} />
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )
-          })}
-        </div>
-
-        {/* bottom CTA strip */}
-        <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ delay: 0.4 }}
-          className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-6 rounded-2xl border border-white/6 px-8 py-6"
-          style={{ background: 'rgba(45,255,196,0.04)' }}>
-          <p className="text-white/60 text-sm font-medium max-w-sm">
-            Need a custom team? We scope, staff, and manage the right talent for your project.
-          </p>
-          <a href="/#inquiry"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-[12px] font-bold uppercase tracking-[0.1em] text-[#060f1e] whitespace-nowrap transition-transform hover:-translate-y-0.5"
-            style={{ background: 'linear-gradient(90deg,#2dffc4,#00e5ff)' }}>
-            Start a Project <ArrowRight size={13} />
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '40px', marginBottom: '72px', flexWrap: 'wrap' }}
+        >
+          <div>
+            <div className="eyebrow" style={{ color: 'rgba(255,255,255,0.40)', marginBottom: '16px' }}>
+              <span className="eyebrow-dot" style={{ background: 'rgba(255,255,255,0.30)' }} />
+              Core Capabilities
+            </div>
+            <h2
+              className="heading-lg"
+              style={{ color: '#ffffff', maxWidth: '480px' }}
+            >
+              Everything your product needs, under one roof.
+            </h2>
+          </div>
+          <a
+            href="/#inquiry"
+            className="btn-outline-white"
+            style={{ flexShrink: 0 }}
+          >
+            Start a Project
+            <ArrowUpRight size={15} />
           </a>
         </motion.div>
+
+        {/* Services Grid */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '1px',
+            background: 'rgba(255,255,255,0.06)',
+            borderRadius: '16px',
+            overflow: 'hidden',
+          }}
+          className="services-grid"
+        >
+          {services.map((s, i) => (
+            <motion.div
+              key={s.num}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.07, duration: 0.5 }}
+              style={{
+                background: 'var(--bg-dark)',
+                padding: '40px 36px',
+                cursor: 'default',
+                transition: 'background 0.2s',
+                position: 'relative',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-dark-subtle)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'var(--bg-dark)'}
+            >
+              {/* Number */}
+              <p style={{
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 800,
+                fontSize: '11px',
+                letterSpacing: '0.14em',
+                color: 'var(--blue)',
+                marginBottom: '20px',
+              }}>
+                {s.num}
+              </p>
+
+              {/* Title */}
+              <h3 style={{
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 700,
+                fontSize: '1.15rem',
+                color: '#ffffff',
+                marginBottom: '14px',
+                letterSpacing: '-0.01em',
+              }}>
+                {s.title}
+              </h3>
+
+              {/* Desc */}
+              <p style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '13.5px',
+                lineHeight: 1.65,
+                color: 'rgba(255,255,255,0.45)',
+                marginBottom: '24px',
+              }}>
+                {s.desc}
+              </p>
+
+              {/* Tags */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                {s.tags.map(t => (
+                  <span
+                    key={t}
+                    style={{
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '10.5px',
+                      fontWeight: 600,
+                      color: 'rgba(255,255,255,0.35)',
+                      padding: '4px 10px',
+                      border: '1px solid rgba(255,255,255,0.10)',
+                      borderRadius: '4px',
+                      letterSpacing: '0.04em',
+                    }}
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
+
+      <style>{`
+        @media (max-width: 1024px) {
+          .services-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 640px) {
+          .services-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </section>
   )
 }

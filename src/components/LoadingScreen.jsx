@@ -1,81 +1,95 @@
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 
 export default function LoadingScreen() {
+  const [progress, setProgress] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress(p => {
+        if (p >= 100) { clearInterval(interval); return 100 }
+        return p + Math.random() * 18
+      })
+    }, 120)
+    return () => clearInterval(interval)
+  }, [])
+
   return (
-    <div className="fixed inset-0 bg-deep-space flex flex-col items-center justify-center z-50">
-      <div className="relative flex items-center justify-center">
-        {/* The Branded Mark (J/T) */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          className="absolute text-white font-bold text-5xl tracking-tighter"
-        >
-          <span className="text-white">J</span>
-          <span className="text-meltgreen">T</span>
-        </motion.div>
-
-        {/* The Meltgreen Ring */}
-        <svg className="w-48 h-48 transform -rotate-90">
-          <motion.circle
-            cx="96"
-            cy="96"
-            r="88"
-            stroke="#2DFFC4"
-            strokeWidth="2"
-            fill="transparent"
-            strokeDasharray="553"
-            initial={{ strokeDashoffset: 553 }}
-            animate={{ 
-              strokeDashoffset: [553, 0, -553],
-            }}
-            transition={{
-              duration: 2.5,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-          {/* Subtle pulse ring */}
-          <motion.circle
-            cx="96"
-            cy="96"
-            r="88"
-            stroke="#2DFFC4"
-            strokeWidth="4"
-            fill="transparent"
-            initial={{ opacity: 0.1, scale: 1 }}
-            animate={{ 
-              opacity: [0.1, 0.4, 0],
-              scale: [1, 1.1, 1.2]
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              ease: "easeOut"
-            }}
-          />
-        </svg>
-      </div>
-
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: '#080D1F',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 9999,
+      }}
+    >
+      {/* Logo */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.8 }}
-        className="mt-12 text-center"
+        transition={{ duration: 0.5 }}
+        style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '48px' }}
       >
-        <h2 className="text-white font-medium tracking-[0.2em] text-sm uppercase">
-          Jaytech <span className="text-meltgreen">Hub</span>
-        </h2>
-        <div className="mt-4 flex justify-center space-x-1">
-          {[0, 1, 2].map((i) => (
-            <motion.span
-              key={i}
-              className="w-1 h-1 bg-meltgreen rounded-full"
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
-            />
-          ))}
+        <div style={{
+          width: '36px', height: '36px', borderRadius: '8px',
+          background: '#1B4FD8',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <svg width="16" height="16" viewBox="0 0 14 14" fill="none">
+            <rect x="1" y="7" width="3" height="6" rx="1" fill="white" opacity="0.5"/>
+            <rect x="5.5" y="4" width="3" height="9" rx="1" fill="white" opacity="0.75"/>
+            <rect x="10" y="1" width="3" height="12" rx="1" fill="white"/>
+          </svg>
         </div>
+        <span style={{
+          fontFamily: 'Inter, sans-serif',
+          fontWeight: 800,
+          fontSize: '1.2rem',
+          letterSpacing: '-0.02em',
+          color: '#ffffff',
+        }}>
+          JAYTECHHUB
+        </span>
+      </motion.div>
+
+      {/* Progress bar */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        style={{ width: '200px' }}
+      >
+        <div style={{
+          height: '2px',
+          background: 'rgba(255,255,255,0.10)',
+          borderRadius: '2px',
+          overflow: 'hidden',
+          marginBottom: '16px',
+        }}>
+          <motion.div
+            style={{
+              height: '100%',
+              background: '#1B4FD8',
+              borderRadius: '2px',
+              width: `${Math.min(progress, 100)}%`,
+              transition: 'width 0.12s ease',
+            }}
+          />
+        </div>
+        <p style={{
+          fontFamily: 'Inter, sans-serif',
+          fontSize: '11px',
+          fontWeight: 500,
+          color: 'rgba(255,255,255,0.25)',
+          textAlign: 'center',
+          letterSpacing: '0.08em',
+        }}>
+          Loading…
+        </p>
       </motion.div>
     </div>
   )
