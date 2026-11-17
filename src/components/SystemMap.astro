@@ -1,0 +1,173 @@
+---
+/**
+ * Signature hero illustration: a live "system map" of the four disciplines.
+ * Paths draw themselves, nodes settle in, then data packets flow between the
+ * hub and each discipline. Pure SVG + GSAP, pauses when off-screen.
+ */
+import mark from '@/assets/brand/jaycrown-mark.png'
+
+const hub = { x: 280, y: 260 }
+const nodes = [
+  { id: 'mobile',  label: 'Mobile',     sub: 'Flutter · offline', x: 112, y: 104 },
+  { id: 'web',     label: 'Full-stack', sub: 'React · Next.js · TS',    x: 448, y: 104 },
+  { id: 'backend', label: 'Backend',    sub: 'Payments · webhooks',     x: 112, y: 416 },
+  { id: 'ai',      label: 'AI',         sub: 'Agents · automation',     x: 448, y: 416 },
+]
+// Gentle S-curves from hub to each node
+const pathFor = (n: { x: number; y: number }) => {
+  const mx = (hub.x + n.x) / 2
+  return `M${hub.x},${hub.y} C${mx},${hub.y} ${mx},${n.y} ${n.x},${n.y}`
+}
+const satellites = [
+  { label: 'Ledger',    x: 40,  y: 300, to: 'backend' },
+  { label: 'Webhooks',  x: 196, y: 492, to: 'backend' },
+  { label: 'LLM tools', x: 440, y: 300, to: 'ai' },
+  { label: 'Queues',    x: 364, y: 492, to: 'ai' },
+  { label: 'Sync',      x: 40,  y: 20,  to: 'mobile' },
+  { label: 'API',       x: 440, y: 20,  to: 'web' },
+]
+const byId = Object.fromEntries(nodes.map((n) => [n.id, n]))
+---
+<div class="relative mx-auto aspect-[560/520] w-full max-w-[560px]" data-system-map>
+  <!-- soft glow behind the hub -->
+  <div aria-hidden="true"
+    class="absolute left-1/2 top-1/2 size-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/20 blur-3xl"></div>
+
+  <svg viewBox="0 0 560 520" class="relative size-full overflow-visible" role="img"
+    aria-label="Diagram: John's four disciplines — Mobile, Full-stack, Backend and AI — connected through one core.">
+    <!-- dotted grid -->
+    <defs>
+      <pattern id="sm-dots" width="24" height="24" patternUnits="userSpaceOnUse">
+        <circle cx="1" cy="1" r="1" class="fill-line-strong" />
+      </pattern>
+      <radialGradient id="sm-fade" cx="50%" cy="50%" r="55%">
+        <stop offset="0%" stop-color="white" stop-opacity="1" />
+        <stop offset="100%" stop-color="white" stop-opacity="0" />
+      </radialGradient>
+      <mask id="sm-mask"><rect width="560" height="520" fill="url(#sm-fade)" /></mask>
+    </defs>
+    <rect width="560" height="520" fill="url(#sm-dots)" mask="url(#sm-mask)" />
+
+    <!-- slow orbit -->
+    <circle data-orbit cx={hub.x} cy={hub.y} r="150" fill="none" class="stroke-line-strong"
+      stroke-dasharray="2 8" style="transform-origin: 280px 260px" />
+
+    <!-- satellite links -->
+    {satellites.map((s) => {
+      const n = byId[s.to]
+      return <line data-sat-link x1={s.x + 40} y1={s.y + 14} x2={n.x} y2={n.y}
+        class="stroke-line-strong" stroke-width="1" stroke-dasharray="3 4" />
+    })}
+
+    <!-- main links -->
+    {nodes.map((n) => (
+      <path data-link={n.id} d={pathFor(n)} fill="none" class="stroke-line-strong" stroke-width="1.5" />
+    ))}
+
+    <!-- packets (positioned by GSAP along the links) -->
+    {nodes.map((n) => (
+      <g data-packet={n.id} opacity="0">
+        <circle r="7" class="fill-accent/25" />
+        <circle r="3" class="fill-accent" />
+      </g>
+    ))}
+
+    <!-- satellites -->
+    {satellites.map((s) => (
+      <g data-sat transform={`translate(${s.x} ${s.y})`}>
+        <rect width="80" height="28" rx="8" class="fill-surface stroke-line" />
+        <text x="40" y="18" text-anchor="middle" class="fill-muted font-mono text-[10px]">{s.label}</text>
+      </g>
+    ))}
+
+    <!-- discipline nodes -->
+    {nodes.map((n) => (
+      <g data-node={n.id} transform={`translate(${n.x} ${n.y})`}>
+        <g data-node-inner>
+          <rect x="-72" y="-28" width="144" height="56" rx="14" class="fill-surface-2 stroke-line-strong" />
+          <circle data-node-dot cx="-54" cy="-10" r="3.5" class="fill-accent" />
+          <text x="-44" y="-6" class="fill-fg text-[14px] font-semibold">{n.label}</text>
+          <text x="-58" y="14" class="fill-muted font-mono text-[9.5px]">{n.sub}</text>
+        </g>
+      </g>
+    ))}
+
+    <!-- hub -->
+    <g data-hub transform={`translate(${hub.x} ${hub.y})`}>
+      <circle data-hub-ring r="44" fill="none" class="stroke-accent/40" stroke-width="1" />
+      <circle r="34" class="fill-surface-2 stroke-accent/60" stroke-width="1.5" />
+      <!-- JC mark (white PNG used as a luminance mask, filled with the accent) -->
+      <mask id="sm-jc"><image href={mark.src} x="-20" y="-18" width="40" height="36" /></mask>
+      <rect x="-20" y="-18" width="40" height="36" class="fill-accent" mask="url(#sm-jc)" />
+    </g>
+  </svg>
+</div>
+
+<script>
+  import gsap from 'gsap'
+  import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
+  import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+  gsap.registerPlugin(MotionPathPlugin, DrawSVGPlugin, ScrollTrigger)
+
+  document.addEventListener('astro:page-load', () => {
+    const root = document.querySelector<HTMLElement>('[data-system-map]')
+    if (!root) return
+    const q = gsap.utils.selector(root)
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (reduced) {
+      gsap.set(q('[data-packet]'), { opacity: 0 })
+      return
+    }
+
+    const ctx = gsap.context(() => {
+      // 1 — entrance
+      const intro = gsap.timeline({ defaults: { ease: 'expo.out' } })
+      intro
+        .from(q('[data-hub]'), { scale: 0.6, opacity: 0, duration: 1, transformOrigin: 'center' })
+        .from(q('[data-link]'), { drawSVG: '0%', duration: 1.2, stagger: 0.08, ease: 'power3.inOut' }, '-=0.6')
+        .from(q('[data-node-inner]'), { scale: 0.85, opacity: 0, duration: 0.9, stagger: 0.08, transformOrigin: 'center' }, '-=0.8')
+        .from(q('[data-sat-link]'), { opacity: 0, duration: 0.8 }, '-=0.5')
+        .from(q('[data-sat]'), { opacity: 0, y: 6, duration: 0.8, stagger: 0.05 }, '<')
+
+      // 2 — ambient loops
+      const loops: gsap.core.Animation[] = []
+      loops.push(gsap.to(q('[data-orbit]'), { rotate: 360, duration: 80, repeat: -1, ease: 'none' }))
+      loops.push(gsap.to(q('[data-hub-ring]'), {
+        scale: 1.25, opacity: 0, duration: 2.4, repeat: -1, ease: 'sine.out', transformOrigin: 'center',
+      }))
+
+      // 3 — data packets: alternate direction, pulse the node on arrival
+      q('[data-link]').forEach((path: Element, i: number) => {
+        const id = (path as SVGPathElement).dataset.link
+        const packet = q(`[data-packet="${id}"]`)[0]
+        const dot = q(`[data-node="${id}"] [data-node-dot]`)[0]
+        const tl = gsap.timeline({ repeat: -1, repeatDelay: 1.2 + i * 0.35, delay: 1.6 + i * 0.5 })
+        tl.set(packet, { opacity: 1 })
+          .to(packet, {
+            duration: 1.6, ease: 'power2.inOut',
+            motionPath: { path: path as SVGPathElement, align: path as SVGPathElement, alignOrigin: [0.5, 0.5], start: 0, end: 1 },
+          })
+          .to(dot, { scale: 1.8, duration: 0.25, yoyo: true, repeat: 1, transformOrigin: 'center' })
+          .to(packet, {
+            duration: 1.6, ease: 'power2.inOut',
+            motionPath: { path: path as SVGPathElement, align: path as SVGPathElement, alignOrigin: [0.5, 0.5], start: 1, end: 0 },
+          }, '+=0.4')
+          .set(packet, { opacity: 0 })
+        loops.push(tl)
+      })
+
+      // Pause everything while off-screen
+      ScrollTrigger.create({
+        trigger: root,
+        start: 'top bottom',
+        end: 'bottom top',
+        onToggle: (self) => loops.forEach((l) => (self.isActive ? l.resume() : l.pause())),
+      })
+    }, root)
+
+    document.addEventListener('astro:before-swap', () => ctx.revert(), { once: true })
+  })
+</script>

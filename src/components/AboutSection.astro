@@ -1,0 +1,34 @@
+---
+import Portrait from './Portrait.astro'
+import { intro, facts } from '@/data/about'
+---
+<section id="about" class="py-20 sm:py-28">
+  <div class="container-x grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+    <Portrait class="aspect-[4/5] w-full max-w-[520px] lg:max-w-none" />
+
+    <div>
+      <p data-reveal class="eyebrow mb-4">About</p>
+      <h2 data-split class="text-balance text-3xl font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[2.75rem]">
+        {intro.heading}
+      </h2>
+      {intro.short.map((p) => (
+        <p data-reveal class="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-muted">{p}</p>
+      ))}
+
+      <dl data-reveal class="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line">
+        {facts.map((f) => (
+          <div class="bg-bg p-5">
+            <dt class="font-mono text-[11px] uppercase tracking-[0.14em] text-faint">{f.label}</dt>
+            <dd class="mt-2 text-[15px] font-medium">{f.value}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <a href="/about" data-reveal
+        class="group mt-10 inline-flex items-center gap-2 rounded-xl border border-line-strong px-5 py-3 text-sm font-medium transition-colors hover:bg-surface-2">
+        Read my story
+        <svg class="size-4 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </a>
+    </div>
+  </div>
+</section>

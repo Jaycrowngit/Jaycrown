@@ -1,0 +1,111 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content'
+import Base from '@/layouts/Base.astro'
+import ProjectMedia from '@/components/ProjectMedia.astro'
+import BrowserFrame from '@/components/BrowserFrame.astro'
+import PhoneFrame from '@/components/PhoneFrame.astro'
+
+export async function getStaticPaths() {
+  const all = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order)
+  return all.map((project, i) => ({
+    params: { slug: project.id },
+    props: { project, next: all[(i + 1) % all.length] },
+  }))
+}
+
+interface Props {
+  project: CollectionEntry<'work'>
+  next: CollectionEntry<'work'>
+}
+const { project, next } = Astro.props
+const { id, data } = project
+const { Content } = await render(project)
+const links = [
+  data.links.live && { label: 'Live site', href: data.links.live },
+  data.links.store && { label: 'App store', href: data.links.store },
+  data.links.repo && { label: 'Source', href: data.links.repo },
+].filter(Boolean) as { label: string; href: string }[]
+---
+<Base title={data.title} description={data.summary}>
+  <article class="pt-32 pb-16 sm:pt-40">
+    <div class="container-x">
+      <a href="/work" data-reveal class="group mb-10 inline-flex items-center gap-2 text-sm text-muted hover:text-fg">
+        <svg class="size-4 transition-transform duration-300 group-hover:-translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"/></svg>
+        All work
+      </a>
+
+      <header class="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-end">
+        <div>
+          <p data-reveal class="eyebrow mb-4">{data.categories.join(' · ')}</p>
+          <h1 transition:name={`title-${id}`} class="text-5xl font-semibold tracking-[-0.04em] sm:text-7xl">{data.title}</h1>
+          <p data-reveal class="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-muted">{data.summary}</p>
+        </div>
+        <dl data-reveal class="grid grid-cols-2 gap-6 border-t border-line pt-6 text-sm lg:border-t-0 lg:pt-0">
+          <div><dt class="eyebrow">Role</dt><dd class="mt-2">{data.role}</dd></div>
+          <div><dt class="eyebrow">Year</dt><dd class:list={['mt-2', data.year === 'TBD' && 'text-faint']}>{data.year}</dd></div>
+          <div class="col-span-2"><dt class="eyebrow">Stack</dt>
+            <dd class="mt-2 flex flex-wrap gap-1.5">
+              {data.stack.map((s) => <span class="rounded-md border border-line px-2 py-0.5 font-mono text-xs text-muted">{s}</span>)}
+            </dd>
+          </div>
+          {links.length > 0 && (
+            <div class="col-span-2 flex flex-wrap gap-4">
+              {links.map((l) => <a href={l.href} target="_blank" rel="noopener" class="text-fg underline decoration-accent/50 underline-offset-4 hover:decoration-accent">{l.label} ↗</a>)}
+            </div>
+          )}
+        </dl>
+      </header>
+
+      <ProjectMedia project={project} size="hero"
+        class:list={['mt-14', data.cover ? 'aspect-[4/3] sm:aspect-[16/9]' : 'aspect-[4/3] sm:aspect-[21/9]']} />
+
+      {data.metrics.length > 0 && (
+        <dl class="mt-4 grid gap-4 sm:grid-cols-3">
+          {data.metrics.map((m) => (
+            <div data-reveal class:list={['rounded-2xl border p-6',
+              m.value === 'TBD' ? 'border-dashed border-line-strong' : 'border-line bg-surface']}>
+              <dd class:list={['text-3xl font-semibold tracking-tight', m.value === 'TBD' && 'text-faint']}>{m.value}</dd>
+              <dt class="mt-1 text-sm text-muted">{m.label}</dt>
+            </div>
+          ))}
+        </dl>
+      )}
+
+      <div data-reveal class="prose-case mx-auto mt-8 max-w-2xl">
+        <Content />
+      </div>
+
+      {(data.gallery.length > 0 || data.phones.length > 1) && (
+        <section class="mt-24" aria-labelledby="screens">
+          <h2 id="screens" data-reveal class="eyebrow mb-8">Screens</h2>
+          <div class="space-y-6">
+            {data.gallery.map((src) => (
+              <div data-reveal><BrowserFrame src={src} alt={`${data.title} screen`} url={data.url} sizes="(min-width: 1152px) 1100px, 95vw" /></div>
+            ))}
+          </div>
+          {data.phones.length > 1 && (
+            <div class="mt-6 grid grid-cols-2 gap-6 rounded-2xl border border-line bg-surface p-6 sm:grid-cols-4 sm:p-10">
+              {data.phones.map((src, i) => (
+                <div data-reveal style={`transform: translateY(${i % 2 ? 24 : 0}px)`}>
+                  <PhoneFrame shots={[src]} alt={`${data.title} mobile screen ${i + 1}`} sizes="(min-width: 640px) 22vw, 45vw" />
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+    </div>
+  </article>
+
+  <nav aria-label="Next project" class="border-t border-line">
+    <a href={`/work/${next.id}`} class="group container-x flex items-center justify-between gap-6 py-16 sm:py-20">
+      <div>
+        <p class="eyebrow mb-3">Next project</p>
+        <p class="text-3xl font-semibold tracking-tight transition-colors group-hover:text-accent-ink sm:text-5xl">{next.data.title}</p>
+      </div>
+      <span class="grid size-14 shrink-0 place-items-center rounded-full border border-line-strong transition-all duration-500 ease-out-expo group-hover:border-accent group-hover:bg-accent group-hover:text-accent-fg">
+        <svg class="size-5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </span>
+    </a>
+  </nav>
+</Base>

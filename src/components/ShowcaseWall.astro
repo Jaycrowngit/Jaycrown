@@ -1,0 +1,93 @@
+---
+/**
+ * Hero backdrop: a tilted wall of real product screenshots drifting in
+ * columns (alternating directions). Pure CSS loop for smoothness; GSAP
+ * flattens the plane as the visitor scrolls. Built from the work collection,
+ * so new screenshots appear here automatically.
+ */
+import { getCollection } from 'astro:content'
+import BrowserFrame from './BrowserFrame.astro'
+import PhoneFrame from './PhoneFrame.astro'
+
+const projects = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order)
+const desktops = projects.flatMap((p) =>
+  [p.data.cover, ...p.data.gallery].filter(Boolean).map((src) => ({ src: src!, title: p.data.title, url: p.data.url })),
+)
+const phones = projects.flatMap((p) => p.data.phones.map((src) => ({ src, title: p.data.title })))
+
+// Each column must be taller than the viewport for a gap-free loop, so repeat
+// shots up to a minimum count (offset per column so neighbours differ).
+const fill = <T,>(items: T[], n: number, offset: number) =>
+  items.length ? Array.from({ length: Math.max(n, items.length) }, (_, i) => items[(i + offset) % items.length]) : []
+const columns = [
+  { kind: 'desktop', items: fill(desktops, 6, 0), dur: 90, reverse: false },
+  { kind: 'phone', items: fill(phones, 5, 0), dur: 70, reverse: true },
+  { kind: 'desktop', items: fill(desktops, 6, 2), dur: 100, reverse: false },
+  { kind: 'phone', items: fill(phones, 5, 3), dur: 80, reverse: true },
+] as const
+---
+<div data-wall class="pointer-events-none absolute inset-0 select-none overflow-hidden" aria-hidden="true">
+  <!-- Anchored near the top: the loop only ever empties the plane's lower half -->
+  <div data-wall-plane class="absolute left-1/2 top-[-30%] flex items-start gap-5 lg:left-[72%]"
+    style="transform-origin: 50% 15%; transform: translateX(-42%) perspective(2200px) rotateX(24deg) rotateY(-10deg) rotateZ(14deg)">
+    {columns.map((col) => (
+      <div class:list={['wall-col flex shrink-0 flex-col gap-5', col.kind === 'desktop' ? 'w-[400px]' : 'w-[190px]',
+        col.reverse && 'wall-col--rev']} style={`--dur: ${col.dur}s`}>
+        {/* rendered twice so the loop is seamless */}
+        {[0, 1].map(() =>
+          col.items.map((it) =>
+            col.kind === 'desktop'
+              ? <BrowserFrame src={it.src} alt="" url={(it as { url?: string }).url} sizes="400px" eager />
+              : <PhoneFrame shots={[it.src]} alt="" sizes="190px" eager />,
+          ),
+        )}
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .wall-col { animation: wall-up var(--dur) linear infinite; will-change: transform; }
+  .wall-col--rev { animation-direction: reverse; }
+  @keyframes wall-up {
+    from { transform: translateY(0); }
+    to   { transform: translateY(calc(-50% - 10px)); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wall-col { animation: none; }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+  gsap.registerPlugin(ScrollTrigger)
+
+  document.addEventListener('astro:page-load', () => {
+    const wall = document.querySelector<HTMLElement>('[data-wall]')
+    const plane = wall?.querySelector<HTMLElement>('[data-wall-plane]')
+    if (!wall || !plane || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    // Entrance lives on the outer wrapper, scroll lives on the plane, so the
+    // two never fight over the same properties. (Previously the scroll tween
+    // captured the entrance's opacity:0 as its start value, so scrolling
+    // back up faded the wall out for good.)
+    gsap.fromTo(wall, { opacity: 0, y: 120 }, { opacity: 1, y: 0, duration: 1.6, ease: 'expo.out', delay: 0.2 })
+
+    // Scroll: the plane flattens and drifts back as the hero leaves.
+    // Explicit from/to values so scrolling back up always restores it exactly.
+    gsap.fromTo(plane,
+      { xPercent: -42, y: 0, transformOrigin: '50% 15%', transformPerspective: 2200,
+        rotationX: 24, rotationY: -10, rotationZ: 14, scale: 1, opacity: 1 },
+      { xPercent: -42, y: -60, rotationX: 8, rotationY: -4, rotationZ: 6, scale: 0.92, opacity: 0.35,
+        ease: 'none', immediateRender: true,
+        scrollTrigger: { trigger: wall.closest('section'), start: 'top top', end: 'bottom top', scrub: 0.8 } })
+
+    // Pause the CSS loop when off-screen (saves battery)
+    ScrollTrigger.create({
+      trigger: wall, start: 'top bottom', end: 'bottom top',
+      onToggle: (self) => wall.querySelectorAll<HTMLElement>('.wall-col')
+        .forEach((c) => (c.style.animationPlayState = self.isActive ? 'running' : 'paused')),
+    })
+  })
+</script>

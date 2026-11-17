@@ -1,0 +1,83 @@
+---
+import { getCollection } from 'astro:content'
+import ShowcaseWall from './ShowcaseWall.astro'
+import { site } from '@/data/site'
+const shipped = (await getCollection('work')).length
+---
+<section class="relative isolate overflow-hidden">
+  <!-- Screenshot wall: right side on desktop, behind a soft fade on mobile -->
+  <div class="absolute inset-0 -z-10">
+    <ShowcaseWall />
+  </div>
+  <!-- fades keep the copy readable -->
+  <div aria-hidden="true" class="absolute inset-0 -z-10 bg-gradient-to-b from-bg/95 via-bg/80 to-bg lg:bg-gradient-to-r lg:from-bg lg:via-bg/85 lg:to-bg/0"></div>
+  <div aria-hidden="true" class="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-bg to-transparent"></div>
+
+  <div class="container-x flex min-h-[100svh] flex-col justify-center pt-32 pb-24 sm:pt-36">
+    <div class="max-w-2xl lg:max-w-[46%]">
+      <p data-reveal class="eyebrow mb-5">{site.name} · {site.title}</p>
+
+      <h1 data-split data-immediate
+        class="text-balance text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.04em] sm:text-6xl xl:text-[4.6rem]">
+        Software that holds up under <span class="text-accent-ink">real money</span> and real users.
+      </h1>
+
+      <p data-reveal class="mt-7 max-w-xl text-pretty text-lg leading-relaxed text-muted">
+        {site.tagline}
+      </p>
+
+      <div data-reveal class="mt-10 flex flex-wrap items-center gap-3">
+        <a href="/#work"
+           class="group inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-accent-fg transition-transform duration-300 ease-out-expo hover:-translate-y-0.5">
+          See selected work
+          <svg class="size-4 transition-transform duration-300 group-hover:translate-y-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 3v10M4 9l4 4 4-4"/></svg>
+        </a>
+        <a href="/#contact"
+           class="inline-flex items-center gap-2 rounded-xl border border-line-strong bg-bg/40 px-5 py-3 text-sm font-medium backdrop-blur transition-colors hover:bg-surface-2">
+          Get in touch
+        </a>
+      </div>
+
+      <dl data-reveal class="mt-12 grid max-w-lg grid-cols-2 gap-x-10 gap-y-4 border-t border-line pt-6 font-mono text-xs sm:grid-cols-3">
+        <div>
+          <dt class="text-faint">Local time</dt>
+          <dd class="mt-1 text-fg" data-clock>{site.location}</dd>
+        </div>
+        <div>
+          <dt class="text-faint">US overlap</dt>
+          <dd class="mt-1 text-fg" data-overlap>ET / PT</dd>
+        </div>
+        <div class="col-span-2 sm:col-span-1">
+          <dt class="text-faint">Shipped</dt>
+          <dd class="mt-1 text-fg">{shipped} products</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { site } from '@/data/site'
+
+  // Offset in hours between a zone and UTC right now (handles DST)
+  const offsetHours = (tz: string) => {
+    const now = new Date()
+    const local = new Date(now.toLocaleString('en-US', { timeZone: tz }))
+    const utc = new Date(now.toLocaleString('en-US', { timeZone: 'UTC' }))
+    return Math.round((local.getTime() - utc.getTime()) / 36e5)
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    const clock = document.querySelector('[data-clock]')
+    const overlap = document.querySelector('[data-overlap]')
+    if (!clock) return
+    const fmt = new Intl.DateTimeFormat('en-US', { timeZone: site.timezone, hour: '2-digit', minute: '2-digit', hour12: false })
+    const tick = () => (clock.textContent = `Lagos ${fmt.format(new Date())}`)
+    tick()
+    const id = setInterval(tick, 15_000)
+    document.addEventListener('astro:before-swap', () => clearInterval(id), { once: true })
+
+    const diff = offsetHours(site.timezone) - offsetHours('America/New_York')
+    if (overlap) overlap.textContent = `+${diff}h vs New York`
+  })
+</script>

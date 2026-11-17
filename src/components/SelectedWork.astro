@@ -1,0 +1,132 @@
+---
+/**
+ * Scroll story: on desktop the project details stay pinned on the left and
+ * swap as each framed screenshot scrolls past on the right. On mobile it
+ * collapses into a simple stacked list.
+ */
+import { getCollection } from 'astro:content'
+import SectionHeader from './SectionHeader.astro'
+import ProjectMedia from './ProjectMedia.astro'
+
+const featured = (await getCollection('work', (p) => p.data.featured))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 4)
+const pad = (n: number) => String(n).padStart(2, '0')
+---
+<section id="work" class="relative py-20 sm:py-28">
+  <div class="container-x">
+    <SectionHeader eyebrow="Selected work" title="Real products, in production, used by real customers.">
+      <a href="/work" data-reveal class="group inline-flex shrink-0 items-center gap-2 text-sm text-muted hover:text-fg">
+        All projects
+        <svg class="size-4 transition-transform duration-300 group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </a>
+    </SectionHeader>
+
+    <div class="lg:grid lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] lg:gap-16" data-showcase>
+      <!-- Pinned details (desktop) -->
+      <div class="hidden lg:block">
+        <div class="sticky top-0 flex h-svh flex-col justify-center">
+          <ol class="mb-10 space-y-2 font-mono text-xs" aria-hidden="true">
+            {featured.map((p, i) => (
+              <li data-chapter-index={i} class="flex items-center gap-3 text-faint transition-colors duration-500">
+                <span class="h-px w-6 bg-current transition-all duration-500" data-chapter-bar></span>
+                {pad(i + 1)} · {p.data.title}
+              </li>
+            ))}
+          </ol>
+          <div class="relative h-[340px]">
+            {featured.map((p, i) => (
+              <div data-chapter-text={i} class:list={['absolute inset-0', i > 0 && 'pointer-events-none opacity-0']}>
+                <p class="eyebrow mb-4">{p.data.categories.join(' · ')}</p>
+                <h3 class="text-4xl font-semibold tracking-[-0.03em] xl:text-5xl">{p.data.title}</h3>
+                <p class="mt-2 font-mono text-xs text-accent-ink">{p.data.role}</p>
+                <p class="mt-5 max-w-md leading-relaxed text-muted">{p.data.summary}</p>
+                <ul class="mt-6 flex flex-wrap gap-1.5">
+                  {p.data.stack.slice(0, 5).map((s) => <li class="rounded-md border border-line px-2 py-0.5 font-mono text-[11px] text-muted">{s}</li>)}
+                </ul>
+                <a href={`/work/${p.id}`} class="group mt-8 inline-flex items-center gap-2 text-sm font-medium text-fg">
+                  <span class="border-b border-accent/50 pb-0.5 group-hover:border-accent">Read the case study</span>
+                  <svg class="size-4 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- Scrolling media -->
+      <div class="space-y-20 lg:space-y-[26vh] lg:py-[22vh]">
+        {featured.map((p, i) => (
+          <article data-chapter={i}>
+            <div class="mb-6 lg:hidden">
+              <p class="eyebrow mb-3">{pad(i + 1)} · {p.data.categories.join(' · ')}</p>
+              <h3 class="text-3xl font-semibold tracking-tight">{p.data.title}</h3>
+              <p class="mt-3 leading-relaxed text-muted">{p.data.summary}</p>
+            </div>
+            <a href={`/work/${p.id}`} class="group block" aria-label={`${p.data.title} case study`}>
+              <div data-chapter-media class="will-change-transform">
+                <ProjectMedia project={p} size="showcase" class="aspect-[16/11]" />
+              </div>
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+  gsap.registerPlugin(ScrollTrigger)
+
+  document.addEventListener('astro:page-load', () => {
+    const root = document.querySelector<HTMLElement>('[data-showcase]')
+    if (!root) return
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+    const texts = root.querySelectorAll<HTMLElement>('[data-chapter-text]')
+    const index = root.querySelectorAll<HTMLElement>('[data-chapter-index]')
+    let active = 0
+
+    const highlight = (i: number) =>
+      index.forEach((el, n) => {
+        el.style.color = n === i ? 'var(--fg)' : ''
+        const bar = el.querySelector<HTMLElement>('[data-chapter-bar]')
+        if (bar) { bar.style.width = n === i ? '40px' : ''; bar.style.background = n === i ? 'var(--accent)' : '' }
+      })
+
+    const activate = (i: number) => {
+      if (i === active) return
+      const dir = i > active ? 1 : -1
+      const prev = texts[active], next = texts[i]
+      active = i
+      highlight(i)
+      // Fast scrolling can skip chapters: stop everything in flight and hide
+      // every chapter except the outgoing and incoming ones.
+      gsap.killTweensOf(texts)
+      texts.forEach((t, n) => { if (t !== prev && t !== next) gsap.set(t, { opacity: 0, y: 0, pointerEvents: 'none' }) })
+      if (reduced) {
+        gsap.set(prev, { opacity: 0, pointerEvents: 'none' })
+        gsap.set(next, { opacity: 1, pointerEvents: 'auto' })
+        return
+      }
+      gsap.to(prev, { opacity: 0, y: -24 * dir, duration: 0.45, ease: 'power2.in', pointerEvents: 'none' })
+      gsap.fromTo(next, { opacity: 0, y: 32 * dir }, { opacity: 1, y: 0, duration: 0.8, ease: 'expo.out', delay: 0.15, pointerEvents: 'auto' })
+    }
+    highlight(0)
+
+    root.querySelectorAll<HTMLElement>('[data-chapter]').forEach((ch, i) => {
+      ScrollTrigger.create({
+        trigger: ch, start: 'top 55%', end: 'bottom 45%',
+        onToggle: (self) => self.isActive && activate(i),
+      })
+      if (reduced) return
+      // Media rises into place and settles: scale + slight tilt, scrubbed
+      const media = ch.querySelector('[data-chapter-media]')
+      gsap.fromTo(media,
+        { scale: 0.9, rotateX: 8, transformPerspective: 1400, opacity: 0.4 },
+        { scale: 1, rotateX: 0, opacity: 1, ease: 'none',
+          scrollTrigger: { trigger: ch, start: 'top bottom', end: 'top 35%', scrub: 0.6 } })
+    })
+  })
+</script>

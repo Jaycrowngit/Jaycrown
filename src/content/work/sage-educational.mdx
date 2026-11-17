@@ -1,0 +1,42 @@
+---
+title: Sage Educational
+summary: Online examination platform — Laravel and Python services, MongoDB, a Next.js admin portal and a Flutter student app.
+role: Full-stack Engineer
+year: TBD
+categories: [EdTech, Mobile]
+stack: [Laravel, Python, MongoDB, Next.js, Flutter]
+logo: ../../assets/logos/sage-logo.png
+accent: '#7c9cff'
+metrics:
+  - { label: Students, value: TBD }
+  - { label: Exams delivered, value: TBD }
+  - { label: Peak concurrency, value: TBD }
+featured: false
+order: 5
+---
+
+{/* TODO(John): confirm role and add numbers. */}
+
+## The problem
+
+Schools needed to run timed exams online, at scale, for students on patchy mobile connections — without answers leaking or sessions dropping mid-exam.
+
+## My role
+
+Full-stack engineer across the API, the Next.js admin portal and the Flutter student app.
+
+## Architecture
+
+- **Laravel API** for auth, scheduling and results; **Python** services for scoring and analytics.
+- **MongoDB** for flexible question banks (multiple choice, theory, media).
+- **Next.js admin portal** for setting exams and reviewing results.
+- **Flutter student app** that caches the exam locally and syncs answers, so a dropped connection doesn't lose work.
+
+## Key decisions
+
+- **Offline-tolerant exam sessions** with server-side timing as the source of truth.
+- **Split services by workload:** request/response in Laravel, heavier scoring in Python.
+
+## Results
+
+TBD.

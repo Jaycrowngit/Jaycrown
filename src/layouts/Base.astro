@@ -1,0 +1,91 @@
+---
+import { ClientRouter } from 'astro:transitions'
+import Nav from '@/components/Nav.astro'
+import Footer from '@/components/Footer.astro'
+import WhatsAppButton from '@/components/WhatsAppButton.astro'
+import { site } from '@/data/site'
+import '@/styles/global.css'
+
+interface Props {
+  title?: string
+  description?: string
+}
+const { title, description = site.description } = Astro.props
+const fullTitle = title
+  ? `${title} — ${site.name}`
+  : `${site.name} — ${site.title} · ${site.focus.join(', ')}`
+const canonical = new URL(Astro.url.pathname, Astro.site)
+
+const personLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  alternateName: site.brand,
+  jobTitle: site.title,
+  url: Astro.site?.toString(),
+  sameAs: [site.links.github, site.links.linkedin],
+}
+---
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#08090c" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.brand} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(personLd)} />
+
+    <!-- Theme before paint (and after every view-transition swap) -->
+    <script is:inline>
+      ;(function () {
+        const apply = (doc) => {
+          let t = null
+          try { t = localStorage.getItem('theme') } catch {}
+          if (!t) t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+          doc.documentElement.dataset.theme = t
+          doc.documentElement.classList.add('js')
+        }
+        apply(document)
+        document.addEventListener('astro:before-swap', (e) => apply(e.newDocument))
+        // Failsafe: if the motion bundle never boots, show all content
+        setTimeout(() => {
+          if (!document.documentElement.dataset.motion) document.documentElement.classList.remove('js')
+        }, 2500)
+      })()
+    </script>
+    <ClientRouter />
+  </head>
+  <body class="grain min-h-dvh">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-fg focus:px-4 focus:py-2 focus:text-bg">
+      Skip to content
+    </a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <WhatsAppButton />
+    <script>
+      import '@/scripts/motion'
+    </script>
+  </body>
+</html>

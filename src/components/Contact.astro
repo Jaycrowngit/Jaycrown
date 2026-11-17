@@ -1,0 +1,52 @@
+---
+import { site } from '@/data/site'
+---
+<section id="contact" class="py-20 sm:py-32">
+  <div class="container-x">
+    <div class="relative overflow-hidden rounded-[2rem] border border-line bg-surface px-6 py-16 text-center sm:px-12 sm:py-24">
+      <div aria-hidden="true" class="absolute inset-x-0 -top-40 mx-auto h-80 max-w-2xl rounded-full bg-accent/15 blur-3xl"></div>
+
+      <p data-reveal class="eyebrow relative mb-5">Contact</p>
+      <h2 data-split class="relative mx-auto max-w-3xl text-balance text-4xl font-semibold leading-[1.05] tracking-[-0.035em] sm:text-6xl">
+        Have a hard system to build? Let's talk.
+      </h2>
+      <p data-reveal class="relative mx-auto mt-6 max-w-lg text-lg text-muted">
+        Senior roles, contracts and technical partnerships. I usually reply within one business day.
+      </p>
+
+      <div data-reveal class="relative mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <a href={`mailto:${site.email}`}
+          class="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-3.5 text-sm font-semibold text-accent-fg transition-transform duration-300 ease-out-expo hover:-translate-y-0.5">
+          Email me
+        </a>
+        <button type="button" data-copy={site.email}
+          class="inline-flex items-center gap-2 rounded-xl border border-line-strong px-6 py-3.5 font-mono text-sm transition-colors hover:bg-surface-2">
+          <span data-copy-label>Copy email</span>
+        </button>
+      </div>
+
+      <ul data-reveal class="relative mt-10 flex justify-center gap-6 text-sm text-muted">
+        <li><a class="hover:text-fg" href={`https://wa.me/${site.whatsapp}?text=${encodeURIComponent(site.whatsappMessage)}`} target="_blank" rel="noopener">WhatsApp ↗</a></li>
+        <li><a class="hover:text-fg" href={site.links.linkedin} target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a class="hover:text-fg" href={site.links.github} target="_blank" rel="noopener">GitHub ↗</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) => {
+      btn.onclick = async () => {
+        const label = btn.querySelector('[data-copy-label]')
+        try {
+          await navigator.clipboard.writeText(btn.dataset.copy ?? '')
+          if (label) label.textContent = 'Copied ✓'
+        } catch {
+          if (label) label.textContent = btn.dataset.copy ?? ''
+        }
+        setTimeout(() => label && (label.textContent = 'Copy email'), 2000)
+      }
+    })
+  })
+</script>
