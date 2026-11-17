@@ -1,0 +1,31 @@
+---
+/** Floating WhatsApp chat button. Persists across view transitions. */
+import { siWhatsapp } from 'simple-icons'
+import { site } from '@/data/site'
+
+const href = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(site.whatsappMessage)}`
+---
+<a href={href} target="_blank" rel="noopener" transition:persist="whatsapp"
+  aria-label="Chat with John on WhatsApp"
+  class="wa-float group fixed bottom-5 right-5 z-50 flex flex-row-reverse items-center gap-0 rounded-full bg-accent p-1.5 text-accent-fg shadow-[0_18px_40px_-12px_rgb(0_0_0/0.6)] ring-1 ring-black/10 transition-[gap,transform] duration-500 ease-out-expo hover:-translate-y-0.5 hover:gap-2 focus-visible:gap-2 sm:bottom-7 sm:right-7">
+  <span class="grid size-11 place-items-center rounded-full bg-black/10 transition-transform duration-500 ease-out-expo group-hover:rotate-[-8deg] sm:size-12">
+    <svg viewBox="0 0 24 24" class="size-[22px] sm:size-6" fill="currentColor" aria-hidden="true">
+      <path d={siWhatsapp.path} />
+    </svg>
+  </span>
+  <!-- label slides out on hover / keyboard focus -->
+  <span class="max-w-0 overflow-hidden whitespace-nowrap pl-0 text-sm font-semibold opacity-0 transition-all duration-500 ease-out-expo group-hover:max-w-[180px] group-hover:pl-3 group-hover:opacity-100 group-focus-visible:max-w-[180px] group-focus-visible:pl-3 group-focus-visible:opacity-100">
+    Chat on WhatsApp
+  </span>
+</a>
+
+<style>
+  .wa-float { animation: wa-in 0.8s var(--ease-out) 1.4s both; }
+  @keyframes wa-in {
+    from { opacity: 0; transform: translateY(16px) scale(0.6); }
+    to   { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wa-float { animation: none; }
+  }
+</style>

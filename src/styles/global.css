@@ -1,0 +1,136 @@
+@import "tailwindcss";
+@import "lenis/dist/lenis.css";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ── Semantic tokens: dark is the default ─────────────────── */
+:root {
+  --bg: #08090c;
+  --surface: #101218;
+  --surface-2: #161922;
+  --line: rgb(255 255 255 / 0.08);
+  --line-strong: rgb(255 255 255 / 0.16);
+  --fg: #eceef3;
+  --muted: #8b91a1;
+  --faint: #5a6070;
+  --accent: #e8b04a;          /* crown gold — fills, lines, glows */
+  --accent-ink: #e8b04a;      /* gold text on dark */
+  --accent-fg: #14100a;       /* text on gold fills */
+  --accent-soft: rgb(232 176 74 / 0.12);
+  --signal: #7c9cff;          /* data-flow blue, used sparingly */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #f7f6f2;
+  --surface: #ffffff;
+  --surface-2: #f0eee8;
+  --line: rgb(20 18 12 / 0.09);
+  --line-strong: rgb(20 18 12 / 0.18);
+  --fg: #14161c;
+  --muted: #5b6070;
+  --faint: #9298a6;
+  --accent: #b7801a;
+  --accent-ink: #8f6312;      /* slightly deeper gold so small text stays readable on light */
+  --accent-fg: #ffffff;
+  --accent-soft: rgb(183 128 26 / 0.1);
+  --signal: #3d63e0;
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-signal: var(--signal);
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+  --ease-out-expo: var(--ease-out);
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
+html {
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+body {
+  @apply font-sans bg-bg text-fg;
+  font-feature-settings: "ss01", "cv11";
+}
+::selection { background: var(--accent); color: var(--accent-fg); }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.container-x { @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8; }
+
+.eyebrow {
+  @apply font-mono text-xs uppercase tracking-[0.18em] text-muted;
+}
+
+/* Subtle noise + vignette for depth without busyness */
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── Motion primitives (JS enhances; content is visible without it) ── */
+.js [data-reveal] { opacity: 0; transform: translateY(18px); }
+.js [data-split] { opacity: 0; }
+
+/* Prose for case studies */
+.prose-case h2 {
+  @apply mt-16 mb-4 text-2xl font-semibold tracking-tight text-fg;
+}
+.prose-case h3 { @apply mt-10 mb-3 text-lg font-semibold text-fg; }
+.prose-case p, .prose-case li { @apply text-[1.05rem] leading-relaxed text-muted; }
+.prose-case p { @apply mb-5; }
+.prose-case ul { @apply mb-6 space-y-2 pl-5 list-disc marker:text-accent-ink; }
+.prose-case strong { @apply font-semibold text-fg; }
+.prose-case code { @apply font-mono text-[0.9em] text-fg bg-surface-2 rounded px-1.5 py-0.5; }
+.prose-case a { @apply text-fg underline decoration-accent/50 underline-offset-4 hover:decoration-accent; }
+
+/* Mobile menu open: tuck the floating WhatsApp button away (the menu has its own) */
+/* (filter, not opacity: the button's entrance animation holds opacity with fill-mode) */
+.wa-float { transition: filter 0.3s, gap 0.5s, transform 0.5s; }
+html:has([data-nav][data-open]) .wa-float { filter: opacity(0); pointer-events: none; }
+
+/* View transitions: smooth cross-fade + slight lift */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.45s;
+  animation-timing-function: var(--ease-out);
+}
+::view-transition-group(*) {
+  animation-duration: 0.6s;
+  animation-timing-function: var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .js [data-reveal], .js [data-split] { opacity: 1; transform: none; }
+}

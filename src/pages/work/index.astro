@@ -1,0 +1,61 @@
+---
+import { getCollection } from 'astro:content'
+import Base from '@/layouts/Base.astro'
+import WorkCard from '@/components/WorkCard.astro'
+import { CATEGORIES } from '@/content.config'
+
+const projects = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order)
+const used = CATEGORIES.filter((c) => projects.some((p) => p.data.categories.includes(c)))
+---
+<Base title="Work" description="Case studies and projects by John Adeoye — fintech, mobile, AI automation, e-commerce, health and edtech.">
+  <section class="pt-36 pb-24 sm:pt-44">
+    <div class="container-x">
+      <p data-reveal class="eyebrow mb-4">Work · {projects.length} projects</p>
+      <h1 data-split data-immediate class="max-w-3xl text-balance text-4xl font-semibold leading-[1.05] tracking-[-0.035em] sm:text-6xl">
+        Everything I've shipped, from payment rails to AI agents.
+      </h1>
+
+      <div data-reveal role="toolbar" aria-label="Filter projects by category" class="mt-12 flex flex-wrap gap-2">
+        {['All', ...used].map((c, i) => (
+          <button type="button" data-filter={c} aria-pressed={i === 0 ? 'true' : 'false'}
+            class="rounded-full border border-line px-4 py-1.5 text-sm text-muted transition-colors hover:text-fg aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-accent-fg">
+            {c}
+          </button>
+        ))}
+      </div>
+
+      <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-work-grid>
+        {projects.map((p) => (
+          <div data-cats={p.data.categories.join('|')} class="flex">
+            <WorkCard project={p} class="w-full" />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]')
+    const items = document.querySelectorAll<HTMLElement>('[data-work-grid] > [data-cats]')
+    if (!buttons.length) return
+
+    const apply = (cat: string) => {
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === cat)))
+      items.forEach((el) => {
+        el.hidden = cat !== 'All' && !el.dataset.cats!.split('|').includes(cat)
+      })
+    }
+
+    buttons.forEach((b) => {
+      b.onclick = () => {
+        const cat = b.dataset.filter!
+        // Cards already carry view-transition names, so the grid reflows smoothly
+        if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.startViewTransition(() => apply(cat))
+        } else apply(cat)
+      }
+    })
+  })
+</script>

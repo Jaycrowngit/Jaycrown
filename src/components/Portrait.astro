@@ -1,0 +1,49 @@
+---
+/** John's portrait: wipes in on reveal, drifts subtly with scroll (parallax). */
+import { Image } from 'astro:assets'
+import profile from '@/assets/profile.png'
+import { site } from '@/data/site'
+
+interface Props { eager?: boolean; class?: string; caption?: boolean }
+const { eager = false, class: cls = '', caption = true } = Astro.props
+---
+<figure data-portrait class:list={['relative isolate overflow-hidden rounded-[1.75rem] border border-line bg-surface-2', cls]}>
+  <div data-portrait-img class="absolute -inset-y-[8%] inset-x-0">
+    <Image src={profile} alt={`${site.name}, ${site.title}`}
+      widths={[480, 720, 960, 1200]} sizes="(min-width: 1024px) 42vw, 92vw"
+      class="size-full object-cover object-[50%_18%]"
+      loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : 'auto'} />
+  </div>
+  <!-- blend the busy outdoor background into the page -->
+  <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-t from-bg via-bg/10 to-transparent"></div>
+
+  {caption && (
+    <figcaption class="absolute inset-x-4 bottom-4 flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white backdrop-blur-md sm:inset-x-5 sm:bottom-5">
+      <div>
+        <p class="text-sm font-semibold">{site.name}</p>
+        <p class="font-mono text-[11px] text-white/65">{site.title}</p>
+      </div>
+      <span class="font-mono text-[11px] text-white/65">{site.location} · Remote</span>
+    </figcaption>
+  )}
+</figure>
+
+<script>
+  import gsap from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+  gsap.registerPlugin(ScrollTrigger)
+
+  document.addEventListener('astro:page-load', () => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    document.querySelectorAll<HTMLElement>('[data-portrait]').forEach((fig) => {
+      const img = fig.querySelector('[data-portrait-img]')
+      // wipe up into view
+      gsap.fromTo(fig, { clipPath: 'inset(18% 0% 0% 0% round 28px)', opacity: 0 },
+        { clipPath: 'inset(0% 0% 0% 0% round 28px)', opacity: 1, duration: 1.4, ease: 'expo.out',
+          scrollTrigger: { trigger: fig, start: 'top 85%', once: true } })
+      // gentle parallax inside the frame
+      gsap.fromTo(img, { yPercent: -5 }, { yPercent: 5, ease: 'none',
+        scrollTrigger: { trigger: fig, start: 'top bottom', end: 'bottom top', scrub: 0.6 } })
+    })
+  })
+</script>

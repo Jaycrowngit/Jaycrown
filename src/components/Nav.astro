@@ -1,0 +1,170 @@
+---
+import Logo from './Logo.astro'
+import ThemeToggle from './ThemeToggle.astro'
+import { nav, site } from '@/data/site'
+const path = Astro.url.pathname
+const isActive = (href: string) => !href.startsWith('/#') && path.startsWith(href)
+const whatsapp = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(site.whatsappMessage)}`
+---
+<header class="fixed inset-x-0 top-0 z-50" transition:name="site-nav" data-nav>
+  <!-- dims the page while the mobile menu is open -->
+  <div data-nav-backdrop aria-hidden="true"
+    class="pointer-events-none fixed inset-0 bg-bg/60 opacity-0 backdrop-blur-sm transition-opacity duration-500 md:hidden"></div>
+
+  <div class="container-x relative pt-4">
+    <nav aria-label="Primary"
+      class="flex h-14 items-center justify-between rounded-2xl border border-line bg-bg/70 px-4 backdrop-blur-xl supports-[backdrop-filter]:bg-bg/55">
+      <Logo />
+
+      <!-- Desktop links -->
+      <ul class="hidden items-center gap-1 md:flex">
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}
+               class:list={['rounded-lg px-3 py-2 text-sm transition-colors',
+                 isActive(item.href) ? 'text-fg' : 'text-muted hover:text-fg']}>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <div class="flex items-center gap-1.5">
+        <ThemeToggle />
+        <a href="/#contact"
+           class="hidden rounded-lg bg-fg px-3.5 py-2 text-sm font-medium text-bg transition-transform duration-300 ease-out-expo hover:-translate-y-0.5 md:inline-block">
+          Let's talk
+        </a>
+
+        <!-- Hamburger (mobile) -->
+        <button type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-menu"
+          class="relative grid size-10 place-items-center rounded-lg text-fg transition-colors hover:bg-surface-2 md:hidden">
+          <span class="sr-only" data-menu-label>Open menu</span>
+          <span aria-hidden="true" class="menu-line menu-line--top"></span>
+          <span aria-hidden="true" class="menu-line menu-line--mid"></span>
+          <span aria-hidden="true" class="menu-line menu-line--bot"></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile menu panel -->
+    <div id="mobile-menu" data-menu-panel inert
+      class="menu-panel absolute inset-x-4 top-[calc(100%+0.5rem)] sm:inset-x-6 md:hidden">
+      <div class="overflow-hidden">
+        <div class="rounded-2xl border border-line bg-surface/95 p-3 shadow-[0_30px_60px_-20px_rgb(0_0_0/0.6)] backdrop-blur-xl">
+          <ul>
+            {nav.map((item, i) => (
+              <li class="menu-item" style={`--i: ${i}`}>
+                <a href={item.href} data-menu-link aria-current={isActive(item.href) ? 'page' : undefined}
+                  class:list={['group flex items-center justify-between rounded-xl px-4 py-3.5 text-2xl font-semibold tracking-tight transition-colors hover:bg-surface-2',
+                    isActive(item.href) ? 'text-accent-ink' : 'text-fg']}>
+                  {item.label}
+                  <svg class="size-5 text-faint transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-fg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <div class="menu-item mt-2 grid grid-cols-2 gap-2 border-t border-line pt-3" style={`--i: ${nav.length}`}>
+            <a href="/#contact" data-menu-link
+              class="rounded-xl bg-accent px-4 py-3 text-center text-sm font-semibold text-accent-fg">Let's talk</a>
+            <a href={whatsapp} target="_blank" rel="noopener" data-menu-link
+              class="rounded-xl border border-line-strong px-4 py-3 text-center text-sm font-medium">WhatsApp</a>
+          </div>
+          <div class="menu-item flex justify-center gap-6 px-4 pb-1 pt-4 font-mono text-xs text-muted" style={`--i: ${nav.length + 1}`}>
+            <a href={site.links.github} target="_blank" rel="noopener" class="hover:text-fg">GitHub ↗</a>
+            <a href={site.links.linkedin} target="_blank" rel="noopener" class="hover:text-fg">LinkedIn ↗</a>
+            <a href={`mailto:${site.email}`} class="hover:text-fg">Email ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  /* Hamburger → X */
+  .menu-line {
+    position: absolute;
+    left: 50%;
+    width: 18px;
+    height: 1.5px;
+    border-radius: 2px;
+    background: currentColor;
+    transform: translateX(-50%);
+    transition: transform 0.45s var(--ease-out), opacity 0.25s, width 0.45s var(--ease-out);
+  }
+  .menu-line--top { top: calc(50% - 6px); }
+  .menu-line--mid { top: calc(50% - 0.75px); width: 12px; transform: translateX(calc(-50% + 3px)); }
+  .menu-line--bot { top: calc(50% + 4.5px); }
+  [data-nav][data-open] .menu-line--top { transform: translateX(-50%) translateY(5.25px) rotate(45deg); }
+  [data-nav][data-open] .menu-line--mid { opacity: 0; width: 0; }
+  [data-nav][data-open] .menu-line--bot { transform: translateX(-50%) translateY(-5.25px) rotate(-45deg); }
+
+  /* Panel: expands open (grid-rows trick) with a slight drop */
+  .menu-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: grid-template-rows 0.55s var(--ease-out), opacity 0.35s, transform 0.55s var(--ease-out);
+  }
+  [data-nav][data-open] .menu-panel { grid-template-rows: 1fr; opacity: 1; transform: none; }
+  [data-nav][data-open] [data-nav-backdrop] { opacity: 1; pointer-events: auto; }
+
+  /* Items cascade in */
+  .menu-item {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.4s, transform 0.6s var(--ease-out);
+  }
+  [data-nav][data-open] .menu-item {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(0.08s + var(--i) * 0.05s);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu-panel, .menu-item, .menu-line { transition: none; }
+  }
+</style>
+
+<script>
+  import { setScrollLocked } from '@/scripts/motion'
+
+  document.addEventListener('astro:page-load', () => {
+    const header = document.querySelector<HTMLElement>('[data-nav]')
+    const toggle = header?.querySelector<HTMLButtonElement>('[data-menu-toggle]')
+    const panel = header?.querySelector<HTMLElement>('[data-menu-panel]')
+    const backdrop = header?.querySelector<HTMLElement>('[data-nav-backdrop]')
+    const label = header?.querySelector('[data-menu-label]')
+    if (!header || !toggle || !panel) return
+
+    const setOpen = (open: boolean, { restoreFocus = true } = {}) => {
+      header.toggleAttribute('data-open', open)
+      toggle.setAttribute('aria-expanded', String(open))
+      if (label) label.textContent = open ? 'Close menu' : 'Open menu'
+      panel.inert = !open
+      setScrollLocked(open)
+      if (open) panel.querySelector<HTMLElement>('[data-menu-link]')?.focus({ preventScroll: true })
+      else if (restoreFocus) toggle.focus({ preventScroll: true })
+    }
+    const isOpen = () => header.hasAttribute('data-open')
+
+    toggle.onclick = () => setOpen(!isOpen())
+    backdrop?.addEventListener('click', () => setOpen(false))
+    panel.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false, { restoreFocus: false })))
+
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && isOpen()) setOpen(false) }
+    const desktop = matchMedia('(min-width: 768px)')
+    const onResize = () => { if (desktop.matches && isOpen()) setOpen(false, { restoreFocus: false }) }
+    document.addEventListener('keydown', onKey)
+    desktop.addEventListener('change', onResize)
+
+    document.addEventListener('astro:before-swap', () => {
+      if (isOpen()) setScrollLocked(false)
+      document.removeEventListener('keydown', onKey)
+      desktop.removeEventListener('change', onResize)
+    }, { once: true })
+  })
+</script>

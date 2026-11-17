@@ -27,3 +27,14 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+
+# Astro / Vercel
+.astro
+.vercel
+
+# Private source CV (contains phone number) — publish a PDF without it instead
+public/*.docx
+.vite
+
+# Unredacted originals of screenshots (contain personal data)
+private/

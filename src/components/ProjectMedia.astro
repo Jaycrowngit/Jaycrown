@@ -1,0 +1,64 @@
+---
+/**
+ * Visual panel for a project: real screenshots in device frames when we have
+ * them, otherwise the logo/monogram. Shared by cards, the showcase and the
+ * case-study header under one transition:name, so it morphs between pages.
+ */
+import { Image } from 'astro:assets'
+import type { CollectionEntry } from 'astro:content'
+import BrowserFrame from './BrowserFrame.astro'
+import PhoneFrame from './PhoneFrame.astro'
+
+interface Props {
+  project: CollectionEntry<'work'>
+  size?: 'card' | 'showcase' | 'hero'
+  class?: string
+}
+const { project, size = 'card', class: cls = '' } = Astro.props
+const { id, data } = project
+const { cover, phones, logo, accent, title, url } = data
+const initials = title.replace(/[^A-Za-z0-9 ]/g, '').split(' ').map((w) => w[0]).join('').slice(0, 2)
+const eager = size === 'hero'
+const sizes = size === 'card' ? '(min-width: 1024px) 30vw, 90vw' : '(min-width: 1024px) 55vw, 95vw'
+const lift = 'transition-transform duration-700 ease-out-expo'
+---
+<div transition:name={`media-${id}`}
+  class:list={['relative isolate overflow-hidden rounded-2xl border border-line bg-surface-2', cls]}
+  style={`--p: ${accent}`}>
+  <!-- accent wash -->
+  <div aria-hidden="true" class="absolute inset-0 -z-10"
+    style="background: radial-gradient(110% 80% at 80% 0%, color-mix(in oklab, var(--p) 34%, transparent), transparent 62%), radial-gradient(70% 60% at 0% 100%, color-mix(in oklab, var(--p) 16%, transparent), transparent 70%)"></div>
+  <div aria-hidden="true" class="absolute inset-0 -z-10 opacity-40"
+    style="background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 32px 32px; mask-image: radial-gradient(ellipse at center, black 25%, transparent 75%)"></div>
+
+  {cover ? (
+    <>
+      <BrowserFrame src={cover} alt={`${title} — product screenshot`} url={url} eager={eager} sizes={sizes}
+        class:list={['absolute left-[7%] top-[11%]', lift, phones.length ? 'w-[74%]' : 'w-[86%]',
+          'group-hover:-translate-y-[2%]']} />
+      {phones.length > 0 && (
+        <PhoneFrame shots={phones} alt={`${title} mobile app`} eager={eager}
+          class:list={['absolute right-[6%] top-[22%] w-[21%]', lift, 'group-hover:-translate-y-[4%]']} />
+      )}
+    </>
+  ) : phones.length > 0 ? (
+    <div class="absolute inset-x-0 top-[12%] flex justify-center">
+      <PhoneFrame shots={phones} alt={`${title} mobile app`} eager={eager}
+        class:list={[size === 'card' ? 'w-[34%]' : 'w-[26%]', lift, 'group-hover:-translate-y-[3%] group-hover:rotate-[-2deg]']} />
+    </div>
+  ) : (
+    <div class="absolute inset-0 grid place-items-center">
+      {logo ? (
+        <div class:list={['grid place-items-center rounded-2xl bg-white/95 shadow-2xl shadow-black/30 ring-1 ring-black/5',
+          size === 'hero' ? 'size-28 p-4 sm:size-32' : 'size-20 p-3 sm:size-24']}>
+          <Image src={logo} alt={`${title} logo`} width={256} class="max-h-full max-w-full object-contain" loading={eager ? 'eager' : 'lazy'} />
+        </div>
+      ) : (
+        <div class:list={['grid place-items-center rounded-2xl border border-line-strong bg-surface font-semibold tracking-tight',
+          size === 'hero' ? 'size-28 text-4xl sm:size-32' : 'size-20 text-2xl sm:size-24']} style="color: var(--p)">
+          {initials}
+        </div>
+      )}
+    </div>
+  )}
+</div>

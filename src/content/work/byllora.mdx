@@ -1,0 +1,50 @@
+---
+title: Byllora
+summary: Automated utility-payments platform for airtime, data, electricity and airtime-to-cash — with real-time gateway webhooks and reconciliation.
+role: Technical Team Lead
+year: TBD
+categories: [Fintech, Mobile]
+stack: [Laravel, PHP, MySQL, Monnify, Webhooks, Flutter]
+logo: ../../assets/logos/byllora.svg
+accent: '#facc15'
+metrics:
+  - { label: Transactions / month, value: TBD }
+  - { label: Success rate, value: TBD }
+  - { label: Active users, value: TBD }
+featured: true
+order: 1
+cover: ../../assets/shots/byllora-admin-1.png
+phones:
+  - ../../assets/shots/byllora-mobile-1.jpg
+  - ../../assets/shots/byllora-mobile-2.jpg
+  - ../../assets/shots/byllora-mobile-3.jpg
+  - ../../assets/shots/byllora-mobile-4.jpg
+gallery:
+  - ../../assets/shots/byllora-admin-2.png
+---
+
+{/* TODO(John): replace TBDs and tighten each section with real numbers and incidents. */}
+
+## The problem
+
+Utility payments in Nigeria run on a chain of upstream providers — payment gateways, telcos and electricity distributors — each with its own latency, failure modes and settlement timing. Users expect airtime to land in seconds; the business needs every naira accounted for.
+
+## My role
+
+Technical Team Lead. I lead full-stack engineering, own the **Monnify** gateway integration and its webhook pipeline, and am accountable for platform reliability.
+
+## Architecture
+
+- **Funding:** dedicated virtual accounts per user via Monnify; inbound transfers confirmed by signed webhooks.
+- **Fulfilment:** purchases move through an explicit state machine — `pending → processing → fulfilled | failed | reversed` — so no request is ever lost.
+- **Reconciliation:** a scheduled job compares provider reports against the internal ledger and flags discrepancies before customers notice.
+
+## Key decisions
+
+- **Idempotency first.** Providers retry webhooks; every event is keyed and processed exactly once.
+- **Ledger, not balances.** Wallet balances are derived from immutable ledger entries, which makes disputes auditable.
+- **Fail loudly upstream, gracefully downstream.** Provider outages trigger automatic reversal and a clear message instead of a stuck spinner.
+
+## Results
+
+TBD — e.g. transaction volume, success rate, reduction in manual reconciliation.
