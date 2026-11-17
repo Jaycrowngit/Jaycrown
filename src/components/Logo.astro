@@ -4,7 +4,7 @@ import mark from '@/assets/brand/jaycrown-mark.png'
 interface Props { class?: string }
 const { class: cls = '' } = Astro.props
 ---
-<a href="/" aria-label="Jaycrown — home" class:list={['group inline-flex items-center gap-2.5', cls]}>
+<a href="/" aria-label="Jaycrown home" class:list={['group inline-flex items-center gap-2.5', cls]}>
   <span aria-hidden="true"
     class="block h-[34px] w-[38px] bg-accent transition-transform duration-500 ease-out-expo group-hover:-rotate-6 group-hover:scale-105"
     style={`mask: url(${mark.src}) center / contain no-repeat; -webkit-mask: url(${mark.src}) center / contain no-repeat;`}></span>

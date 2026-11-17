@@ -12,8 +12,8 @@ interface Props {
 }
 const { title, description = site.description } = Astro.props
 const fullTitle = title
-  ? `${title} — ${site.name}`
-  : `${site.name} — ${site.title} · ${site.focus.join(', ')}`
+  ? `${title} | ${site.name}`
+  : `${site.name} | ${site.title} · ${site.focus.join(', ')}`
 const canonical = new URL(Astro.url.pathname, Astro.site)
 
 const personLd = {
@@ -27,14 +27,16 @@ const personLd = {
 }
 ---
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" data-theme-pref="system">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#08090c" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#08090c" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f6f2" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -54,17 +56,33 @@ const personLd = {
 
     <script type="application/ld+json" set:html={JSON.stringify(personLd)} />
 
-    <!-- Theme before paint (and after every view-transition swap) -->
+    <!-- Theme before paint (and after every view-transition swap).
+         Preference: 'system' (default) | 'light' | 'dark'. System follows the OS live. -->
     <script is:inline>
       ;(function () {
+        const KEY = 'theme-pref' // new key: older saved 'theme' values are ignored, so everyone starts on System
+        const mq = matchMedia('(prefers-color-scheme: light)')
+        const getPref = () => {
+          try { const p = localStorage.getItem(KEY); if (p === 'light' || p === 'dark') return p } catch {}
+          return 'system'
+        }
+        const resolve = (pref) => (pref === 'system' ? (mq.matches ? 'light' : 'dark') : pref)
         const apply = (doc) => {
-          let t = null
-          try { t = localStorage.getItem('theme') } catch {}
-          if (!t) t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
-          doc.documentElement.dataset.theme = t
+          const pref = getPref()
+          doc.documentElement.dataset.theme = resolve(pref)
+          doc.documentElement.dataset.themePref = pref
           doc.documentElement.classList.add('js')
         }
+        window.__theme = {
+          get: getPref,
+          set(pref) {
+            try { pref === 'system' ? localStorage.removeItem(KEY) : localStorage.setItem(KEY, pref) } catch {}
+            apply(document)
+          },
+        }
         apply(document)
+        // OS switched light/dark while the page is open → follow it (only in System mode)
+        mq.addEventListener('change', () => { if (getPref() === 'system') apply(document) })
         document.addEventListener('astro:before-swap', (e) => apply(e.newDocument))
         // Failsafe: if the motion bundle never boots, show all content
         setTimeout(() => {
