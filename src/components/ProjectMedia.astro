@@ -33,7 +33,7 @@ const lift = 'transition-transform duration-700 ease-out-expo'
 
   {cover ? (
     <>
-      <BrowserFrame src={cover} alt={`${title} — product screenshot`} url={url} eager={eager} sizes={sizes}
+      <BrowserFrame src={cover} alt={`${title} product screenshot`} url={url} eager={eager} sizes={sizes}
         class:list={['absolute left-[7%] top-[11%]', lift, phones.length ? 'w-[74%]' : 'w-[86%]',
           'group-hover:-translate-y-[2%]']} />
       {phones.length > 0 && (

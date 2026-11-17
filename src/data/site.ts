@@ -4,9 +4,9 @@ export const site = {
   title: 'Senior Software Engineer',
   focus: ['Full-stack', 'Mobile', 'Backend', 'AI Automation'] as const,
   tagline:
-    'I design and ship production systems — payment rails, mobile apps, APIs and AI automations — that hold up under real money and real users.',
+    'I design and ship production systems that hold up under real money and real users: payment rails, mobile apps, APIs and AI automations.',
   description:
-    'John Adeoye (Jaycrown) — Senior Software Engineer building full-stack, mobile, backend and AI-automation systems for fintech, e-commerce and SaaS teams worldwide.',
+    'John Adeoye (Jaycrown), Senior Software Engineer building full-stack, mobile, backend and AI-automation systems for fintech, e-commerce and SaaS teams worldwide.',
   location: 'Nigeria',
   timezone: 'Africa/Lagos',
   email: 'johnayooluwaadeoye@gmail.com',
@@ -30,7 +30,7 @@ export const capabilities = [
   {
     key: 'fullstack',
     title: 'Full-stack Product',
-    body: 'React, Next.js and TypeScript front ends on top of Laravel, Node and Python services — owned end to end, from schema to deploy.',
+    body: 'React, Next.js and TypeScript front ends on top of Laravel, Node and Python services, owned end to end, from schema to deploy.',
     stack: ['React', 'Next.js', 'TypeScript', 'Laravel', 'Node.js'],
   },
   {
@@ -42,13 +42,13 @@ export const capabilities = [
   {
     key: 'backend',
     title: 'Backend & Payments',
-    body: 'Transaction workflows, webhooks and reconciliation across Paystack, Flutterwave and Monnify — idempotent, observable, auditable.',
+    body: 'Transaction workflows, webhooks and reconciliation across Paystack, Flutterwave and Monnify: idempotent, observable and auditable.',
     stack: ['PostgreSQL', 'MySQL', 'Redis', 'Docker', 'AWS'],
   },
   {
     key: 'ai',
     title: 'AI Automation',
-    body: 'LLM-powered agents and workflows wired into real business processes — WhatsApp assistants, triage and data extraction.',
+    body: 'LLM-powered agents and workflows wired into real business processes: WhatsApp assistants, triage and data extraction.',
     stack: ['Python', 'LLM APIs', 'Webhooks', 'Queues'],
   },
 ] as const
@@ -57,7 +57,7 @@ export const experience = [
   {
     role: 'AI & Full-stack Developer',
     company: 'NCDF Group',
-    period: 'TBD — Present', // TODO: start date
+    period: 'Since TBD', // TODO: start year, e.g. 'Since 2024'
     points: [
       'Build and maintain full-stack applications across frontend and backend layers.',
       'Integrate AI and ML workflows to automate complex application logic.',
@@ -67,7 +67,7 @@ export const experience = [
   {
     role: 'Technical Team Lead',
     company: 'Byllora',
-    period: 'TBD — Present', // TODO: dates
+    period: 'Since TBD', // TODO: start year
     points: [
       'Lead engineering for an automated utility-payments platform: airtime, data, electricity and airtime-to-cash.',
       'Own Monnify gateway integration and real-time transaction webhooks.',

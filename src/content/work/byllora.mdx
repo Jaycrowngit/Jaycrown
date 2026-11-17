@@ -1,6 +1,6 @@
 ---
 title: Byllora
-summary: Automated utility-payments platform for airtime, data, electricity and airtime-to-cash — with real-time gateway webhooks and reconciliation.
+summary: Automated utility-payments platform for airtime, data, electricity and airtime-to-cash, with real-time gateway webhooks and reconciliation.
 role: Technical Team Lead
 year: TBD
 categories: [Fintech, Mobile]
@@ -27,7 +27,7 @@ gallery:
 
 ## The problem
 
-Utility payments in Nigeria run on a chain of upstream providers — payment gateways, telcos and electricity distributors — each with its own latency, failure modes and settlement timing. Users expect airtime to land in seconds; the business needs every naira accounted for.
+Utility payments in Nigeria run on a chain of upstream providers (payment gateways, telcos and electricity distributors), each with its own latency, failure modes and settlement timing. Users expect airtime to land in seconds; the business needs every naira accounted for.
 
 ## My role
 
@@ -36,7 +36,7 @@ Technical Team Lead. I lead full-stack engineering, own the **Monnify** gateway 
 ## Architecture
 
 - **Funding:** dedicated virtual accounts per user via Monnify; inbound transfers confirmed by signed webhooks.
-- **Fulfilment:** purchases move through an explicit state machine — `pending → processing → fulfilled | failed | reversed` — so no request is ever lost.
+- **Fulfilment:** purchases move through an explicit state machine (`pending → processing → fulfilled | failed | reversed`), so no request is ever lost.
 - **Reconciliation:** a scheduled job compares provider reports against the internal ledger and flags discrepancies before customers notice.
 
 ## Key decisions
@@ -47,4 +47,4 @@ Technical Team Lead. I lead full-stack engineering, own the **Monnify** gateway 
 
 ## Results
 
-TBD — e.g. transaction volume, success rate, reduction in manual reconciliation.
+TBD, e.g. transaction volume, success rate, reduction in manual reconciliation.
