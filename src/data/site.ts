@@ -37,7 +37,7 @@ export const capabilities = [
     key: 'mobile',
     title: 'Mobile',
     body: 'Cross-platform Flutter apps shipped to the stores, built offline-first for unreliable networks and low-end devices.',
-    stack: ['Flutter', 'Dart', 'Firebase'],
+    stack: ['Flutter', 'Dart', 'Firestore'],
   },
   {
     key: 'backend',

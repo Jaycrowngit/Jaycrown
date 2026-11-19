@@ -34,7 +34,7 @@ const pad = (n: number) => String(n).padStart(2, '0')
               </li>
             ))}
           </ol>
-          <div class="relative h-[340px]">
+          <div class="relative h-[390px]">
             {featured.map((p, i) => (
               <div data-chapter-text={i} class:list={['absolute inset-0', i > 0 && 'pointer-events-none opacity-0']}>
                 <p class="eyebrow mb-4">{p.data.categories.join(' · ')}</p>
@@ -42,7 +42,7 @@ const pad = (n: number) => String(n).padStart(2, '0')
                 <p class="mt-2 font-mono text-xs text-accent-ink">{p.data.role}</p>
                 <p class="mt-5 max-w-md leading-relaxed text-muted">{p.data.summary}</p>
                 <ul class="mt-6 flex flex-wrap gap-1.5">
-                  {p.data.stack.slice(0, 5).map((s) => <li class="rounded-md border border-line px-2 py-0.5 font-mono text-[11px] text-muted">{s}</li>)}
+                  {p.data.stack.map((s) => <li class="rounded-md border border-line px-2 py-0.5 font-mono text-[11px] text-muted">{s}</li>)}
                 </ul>
                 <a href={`/work/${p.id}`} class="group mt-8 inline-flex items-center gap-2 text-sm font-medium text-fg">
                   <span class="border-b border-accent/50 pb-0.5 group-hover:border-accent">Read the case study</span>
